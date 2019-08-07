@@ -11,6 +11,7 @@ import argparse
 
 from IntentGetRestaurantInfo import processRestaurantInfoIntent
 
+
 #from flask_assistant import ask, tell, event, build_item
 
 app = Flask(__name__)
