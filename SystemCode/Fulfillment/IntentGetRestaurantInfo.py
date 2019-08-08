@@ -8,6 +8,7 @@ import urllib.parse as urllib
 from urllib.error import HTTPError
 from urllib.parse import quote
 from urllib.parse import urlencode
+import random
 # import pprint
 
 from yelpAPIHelper import yelp_query_api
@@ -17,11 +18,41 @@ DEBUG_MODE = False
 # **********************
 # UTIL FUNCTIONS : END
 # **********************
+def validateParameters(params):
+    returnText = []
+
+    RestaurantName = params["RestaurantName"]
+    if (RestaurantName == "" or RestaurantName.lower() in ["hi", "hello", "how are you"]):
+        restNameArray = ["Please enter a restaurant", "Which restaurant would that be?", "Could you tell me the name of the restaurant that you are interested in?"]
+        returnText.append(random.choice(restNameArray))
+
+    Location = params.get("location", DEFAULT_LOCATION)
+    Country = Location.get("country", None) if isinstance(Location, dict) else None
+    if ( Country != None and Country != "" and Country != "Singapore"):
+        countryArray = ["I'm sorry, we cater only to food found in Singapore and not " + Country, "Oops! " + Country + " is not supported!"]
+        returnText.append(random.choice(countryArray))
+
+    if (len(returnText) == 0): return None
+    else:
+        return { "fulfillmentMessages": [{
+            "text" : {
+                "text": returnText
+            }
+        }]}
+    return None
+
 
 def processRestaurantInfoIntent(req):
-    RestaurantName = req["queryResult"]["parameters"]["RestaurantName"]
 
-    Location = req["queryResult"]["parameters"].get("Location")
+    # Slot filling check for required parameters
+    invalid = validateParameters(req["queryResult"]["parameters"])
+    if (invalid != None):
+        return make_response(jsonify(invalid))
+
+
+    # Slot filling passed
+    RestaurantName = req["queryResult"]["parameters"]["RestaurantName"]
+    Location = req["queryResult"]["parameters"].get("location")
     if (Location == None): Location = DEFAULT_LOCATION
 
     address = Location if isinstance(Location, str) else Location.get("street-address")
@@ -30,40 +61,37 @@ def processRestaurantInfoIntent(req):
     if (address == "" or address == None): address = Location.get("business-name")
     if (address == "" or address == None): address = DEFAULT_LOCATION
 
-    if RestaurantName != "":
-        RestaurantName = RestaurantName.replace(" ","-")
-        RestaurantName = RestaurantName + "-Singapore"
-        results = getRestaurantInfoIntentHandler(RestaurantName, address)
+    RestaurantName = RestaurantName.replace(" ","-")
+    RestaurantName = RestaurantName + "-Singapore"
+    results = getRestaurantInfoIntentHandler(RestaurantName, address)
 
-        if (results == None):
-            fulfillmentMessage = [
-                { "text": {
-                    "text": ["No businesses for " + RestaurantName + " in " + address + " found."]}
-                }
-            ]
-        else:
-            fulfillmentMessage = []
-            num = 1
-            for r in results:
-                subTitle = "Address:\t %s. \nPhone:\t %s. \nPrice Range:\t %s. \nOpening Hours:\t %s. \nCategory:\t %s." % (r["address"], r["phone"], r["price_range"], r["hours"], r["category"])
-                # defaultPayload = "DEFAULT PAYLOAD"
-                fulfillmentMessage.append({
-                    "card": {
-                        "title": str(num) + ". " + r["name"], "subtitle": subTitle,
-                        "imageUri": "",
-                        "buttons": [{"text": "Go to site","postback": r["website"]}]
-                    }
-                })
-                num = num + 1
+    if (results == None):
+        fulfillmentMessage = [
+            { "text": {
+                "text": ["No businesses for " + RestaurantName + " in " + address + " found."]}
+            }
+        ]
     else:
-        RichMessages = "Restaurant Name is null ..."
-
+        fulfillmentMessage = []
+        num = 1
+        for r in results:
+            subTitle = "Address:\t %s. \nPhone:\t %s. \nPrice Range:\t %s. \nOpening Hours:\t %s. \nCategory:\t %s." % (r["address"], r["phone"], r["price_range"], r["hours"], r["category"])
+            # defaultPayload = "DEFAULT PAYLOAD"
+            fulfillmentMessage.append({
+                "card": {
+                    "title": str(num) + ". " + r["name"], "subtitle": subTitle,
+                    "imageUri": "",
+                    "buttons": [{"text": "Go to site","postback": r["website"]}]
+                }
+            })
+            num = num + 1
 
     RichMessages =  {
         # "fulfillmentText": defaultPayload,
         "fulfillmentMessages": fulfillmentMessage
-
     }
+
+
 
     # Return the Restaurant Information
     return make_response(jsonify(RichMessages))
