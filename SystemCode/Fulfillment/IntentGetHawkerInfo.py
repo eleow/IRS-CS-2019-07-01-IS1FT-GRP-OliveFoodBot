@@ -35,15 +35,19 @@ def getHawkerInfoIntentHandler(url):
     while ' ' in resultList1:
         resultList1.remove(' ')
         
-    theXpath2 = '//h2/a/@href' # get text the link
+    theXpath2 = '//h2/a/@href' # get the link
     resultList2 = parser.xpath(theXpath2)
-    return resultList1, resultList2    
+
+    theXpath3 = '//ul[2]/li[1]/p/text()' # get the highlights
+    resultList3 = parser.xpath(theXpath3)
+
+    return resultList1, resultList2, resultList3
 
 def processHawkerInfoIntent(req):
     Answer = req["queryResult"]["parameters"]["Answer"]
     if Answer == 'Yes':
         url = 'https://www.thebestsingapore.com/eat-and-drink/the-best-5-hawker-centres-in-singapore/'
-        nameList, urlList = getHawkerInfoIntentHandler(url)
+        nameList, urlList, highlights = getHawkerInfoIntentHandler(url)
         if nameList == None:
             fulfillmentMessage = [
                 { "text": {
@@ -58,7 +62,7 @@ def processHawkerInfoIntent(req):
                 fulfillmentMessage.append({
                     "card": {
                         "title": nameList[i], 
-                        "subtitle": "",
+                        "subtitle": highlights[i],
                         "imageUri": "",
                         "buttons": [{"text": "Go to site","postback": urlList[i]}]
                     }
@@ -66,14 +70,31 @@ def processHawkerInfoIntent(req):
                 num = num + 1
 
             fulfillmentMessage.append({
+                    "quickReplies": {
+                        "title": "Choose one:",
+                        "quickReplies": [
+                           "Get Restaurant Info",
+                           "Hawker Info",
+                           "Top 50 Restaurants"
+                         ]
+                    },
                     "platform": "slack",
                     "platform": "facebook",
                     "platform": "ACTIONS_ON_GOOGLE"
             })
     else:
         fulfillmentMessage = [
-            { "text": {
-                "text": ["So would you want to check on other options ?"]}
+            { "quickReplies": {
+                "title": "Choose one:",
+                "quickReplies": [
+                    "Get Restaurant Info",
+                    "Hawker Info",
+                    "Top 50 Restaurants"
+                ]
+               },
+               "platform": "facebook",
+               "platform": "slack",
+               "platform": "ACTIONS_ON_GOOGLE"
             }
         ]
         
