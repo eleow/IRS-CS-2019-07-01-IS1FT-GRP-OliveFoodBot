@@ -27,16 +27,7 @@ def webhook():
 
     if ("GetRestInfo" in intent_name):
         return processRestaurantInfoIntents(req)
-    # if intent_name == "GetRestInfo-Entry":
-    #     return processRestaurantInfoIntent(req)
-    # elif intent_name == "GetRestInfo-Location":
-    #     return processRestaurantInfoLocationIntent(req)
-    # elif "GetRestInfo-Confirm" in intent_name:
-    #     return processRestaurantInfoConfirmIntent(req)
-    # elif intent_name == "GetRestInfo-Confirm-Yes":
-        # return processRestaurantInfoConfirmIntent(req)
-
-    elif intent_name == "Hawker Info":
+    elif ("Hawker Info" in intent_name):
         return processHawkerInfoIntent(req)
     else:
         fulfillmentText = "Unable to find a matching intent. Try again."

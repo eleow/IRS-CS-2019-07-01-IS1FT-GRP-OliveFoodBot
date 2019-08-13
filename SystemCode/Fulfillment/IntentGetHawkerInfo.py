@@ -13,10 +13,10 @@ DEBUG_MODE = False
 
 
 # *****************************
-# Hawker Intent Handlers funcs : 
+# Hawker Intent Handlers funcs :
 # *****************************
 
-def getHawkerInfoIntentHandler(url):   
+def getHawkerInfoIntentHandler(url):
     try:
         page = requests.get(url)
     except HTTPError as e:
@@ -34,7 +34,7 @@ def getHawkerInfoIntentHandler(url):
     resultList1 = parser.xpath(theXpath1)
     while ' ' in resultList1:
         resultList1.remove(' ')
-        
+
     theXpath2 = '//h2/a/@href' # get the link
     resultList2 = parser.xpath(theXpath2)
 
@@ -44,8 +44,9 @@ def getHawkerInfoIntentHandler(url):
     return resultList1, resultList2, resultList3
 
 def processHawkerInfoIntent(req):
-    Answer = req["queryResult"]["parameters"]["Answer"]
-    if Answer == 'Yes':
+    intent_name = req["queryResult"]["intent"]["displayName"]
+    # Answer = req["queryResult"]["parameters"]["Answer"]
+    if (intent_name == "Hawker Info-yes"):
         url = 'https://www.thebestsingapore.com/eat-and-drink/the-best-5-hawker-centres-in-singapore/'
         nameList, urlList, highlights = getHawkerInfoIntentHandler(url)
         if nameList == None:
@@ -61,7 +62,7 @@ def processHawkerInfoIntent(req):
                 # defaultPayload = "DEFAULT PAYLOAD"
                 fulfillmentMessage.append({
                     "card": {
-                        "title": nameList[i], 
+                        "title": nameList[i],
                         "subtitle": highlights[i],
                         "imageUri": "",
                         "buttons": [{"text": "Go to site","postback": urlList[i]}]
@@ -82,23 +83,41 @@ def processHawkerInfoIntent(req):
                     "platform": "facebook",
                     "platform": "ACTIONS_ON_GOOGLE"
             })
+    elif (intent_name == "Hawker Info-no"):
+        if DEBUG_MODE: print("User has cancelled... Redirect to welcome")
+        followupEvent = {"name": "WELCOME"}
+        return make_response(jsonify({
+            "followupEventInput": followupEvent
+        }))
+
+        # fulfillmentMessage = [
+        #     { "quickReplies": {
+        #         "title": "Choose one:",
+        #         "quickReplies": [
+        #             "Get Restaurant Info",
+        #             "Hawker Info",
+        #             "Top 50 Restaurants"
+        #         ]
+        #        },
+        #        "platform": "facebook",
+        #        "platform": "slack",
+        #        "platform": "ACTIONS_ON_GOOGLE"
+        #     }
+        # ]
     else:
-        fulfillmentMessage = [
-            { "quickReplies": {
-                "title": "Choose one:",
-                "quickReplies": [
-                    "Get Restaurant Info",
-                    "Hawker Info",
-                    "Top 50 Restaurants"
-                ]
-               },
-               "platform": "facebook",
-               "platform": "slack",
-               "platform": "ACTIONS_ON_GOOGLE"
-            }
-        ]
-        
-         
+        return make_response(jsonify({
+            "fulfillmentMessages": [{
+                "quickReplies": {
+                    "title": ["Would you like to know which are the best Hawkers in Singapore?"],
+                    "quickReplies": [
+                        "Yes", "No"
+                    ]
+                }
+            }]
+        }))
+
+
+
     RichMessages =  {
         # "fulfillmentText": defaultPayload,
         "fulfillmentMessages": fulfillmentMessage
