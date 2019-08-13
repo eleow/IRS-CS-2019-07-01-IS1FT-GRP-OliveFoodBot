@@ -1,0 +1,40 @@
+{
+  "id": "84fde67d-29c8-4609-8f22-0689bf87c064",
+  "name": "RestaurantNoPreferredLocation",
+  "isOverridable": true,
+  "entries": [
+    {
+      "value": "False",
+      "synonyms": [
+        "Central",
+        "East",
+        "Orchard",
+        "Orchard Road",
+        "Sentosa",
+        "Tampines",
+        "West"
+      ]
+    },
+    {
+      "value": "True",
+      "synonyms": [
+        "Anything",
+        "Anything la",
+        "Anywhere",
+        "Don't know",
+        "Give me anything",
+        "Nah",
+        "No",
+        "No preference",
+        "Nope",
+        "Not really",
+        "Singapore",
+        "Up to you"
+      ]
+    }
+  ],
+  "isEnum": false,
+  "automatedExpansion": true,
+  "allowFuzzyExtraction": false,
+  "isRegexp": false
+}

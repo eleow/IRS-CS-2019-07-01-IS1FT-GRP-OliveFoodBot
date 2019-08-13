@@ -9,7 +9,7 @@ from time import sleep
 # import re,urllib.parse as urllib
 import argparse
 
-from IntentGetRestaurantInfo import processRestaurantInfoIntent
+from IntentGetRestaurantInfo import processRestaurantInfoIntents
 from IntentGetHawkerInfo import processHawkerInfoIntent
 
 #from flask_assistant import ask, tell, event, build_item
@@ -25,11 +25,18 @@ def webhook():
     req = request.get_json(silent=True, force=True)
     intent_name = req["queryResult"]["intent"]["displayName"]
 
+    if ("GetRestInfo" in intent_name):
+        return processRestaurantInfoIntents(req)
+    # if intent_name == "GetRestInfo-Entry":
+    #     return processRestaurantInfoIntent(req)
+    # elif intent_name == "GetRestInfo-Location":
+    #     return processRestaurantInfoLocationIntent(req)
+    # elif "GetRestInfo-Confirm" in intent_name:
+    #     return processRestaurantInfoConfirmIntent(req)
+    # elif intent_name == "GetRestInfo-Confirm-Yes":
+        # return processRestaurantInfoConfirmIntent(req)
 
-    if intent_name == "Get Restaurant Info":
-        return processRestaurantInfoIntent(req)
-
-    elif intent_name == "Hawker Info": 
+    elif intent_name == "Hawker Info":
         return processHawkerInfoIntent(req)
     else:
         fulfillmentText = "Unable to find a matching intent. Try again."

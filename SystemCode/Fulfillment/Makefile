@@ -18,7 +18,7 @@ clean:
 	rm -rf docs/_build
 
 run:
-	python manage.py runserver
+	python TouristFood-main.py
 
 ngrok:
 	ngrok http 5000

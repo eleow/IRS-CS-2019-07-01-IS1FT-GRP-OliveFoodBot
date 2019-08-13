@@ -1,0 +1,776 @@
+{
+  "id": "2193b167-c714-4843-8441-5e117fcfd557",
+  "name": "GetRestInfo-Entry",
+  "auto": true,
+  "contexts": [],
+  "responses": [
+    {
+      "resetContexts": false,
+      "affectedContexts": [
+        {
+          "name": "GetRestaurantInfo-followup",
+          "parameters": {},
+          "lifespan": 1
+        },
+        {
+          "name": "GetRestaurantInfo",
+          "parameters": {},
+          "lifespan": 1
+        }
+      ],
+      "parameters": [
+        {
+          "id": "63d12073-7980-4f81-95aa-f8535a7098a0",
+          "required": true,
+          "dataType": "@RestaurantName",
+          "name": "restaurantName",
+          "value": "$restaurantName",
+          "prompts": [
+            "Can you enter a Restaurant Name for me to help you to search for more information ?",
+            "Which restaurant would that be?"
+          ],
+          "promptMessages": [],
+          "noMatchPromptMessages": [],
+          "noInputPromptMessages": [],
+          "outputDialogContexts": [],
+          "isList": false
+        },
+        {
+          "id": "e0cbd58d-cb83-4f4f-9a22-02c5ecc6ba7a",
+          "required": false,
+          "dataType": "@sys.location",
+          "name": "location",
+          "value": "$location",
+          "promptMessages": [],
+          "noMatchPromptMessages": [],
+          "noInputPromptMessages": [],
+          "outputDialogContexts": [],
+          "isList": false
+        }
+      ],
+      "messages": [
+        {
+          "type": 2,
+          "platform": "slack",
+          "title": "Choose one:",
+          "replies": [
+            "Get Restaurant Info",
+            "Top 50 Restaurants",
+            "Quit"
+          ],
+          "lang": "en"
+        },
+        {
+          "type": 2,
+          "platform": "facebook",
+          "title": "Choose one:",
+          "replies": [
+            "Get Restaurant Info",
+            "Top 50 Restaurants",
+            "Quit"
+          ],
+          "lang": "en"
+        },
+        {
+          "type": "suggestion_chips",
+          "platform": "google",
+          "suggestions": [
+            {
+              "title": "Get Restaurant Info"
+            },
+            {
+              "title": "Top 50 Restaurants"
+            },
+            {
+              "title": "Quit"
+            }
+          ],
+          "lang": "en"
+        },
+        {
+          "type": 0,
+          "speech": [
+            "We seem to be experiencing some problems. Please try again later!",
+            "Oops, something is wrong. Please try again later!"
+          ]
+        }
+      ],
+      "defaultResponsePlatforms": {
+        "facebook": true,
+        "google": true
+      },
+      "speech": []
+    }
+  ],
+  "priority": 500000,
+  "webhookUsed": true,
+  "webhookForSlotFilling": true,
+  "fallbackIntent": false,
+  "events": [
+    {
+      "name": "actions_intent_restaurantInfo"
+    }
+  ],
+  "userSays": [
+    {
+      "id": "c68a8d70-05ab-4eaa-81a8-1a62691a0c7c",
+      "data": [
+        {
+          "text": "Burger King",
+          "alias": "restaurantName",
+          "meta": "@RestaurantName",
+          "userDefined": true
+        },
+        {
+          "text": " at ",
+          "userDefined": false
+        },
+        {
+          "text": "Woodlands",
+          "alias": "location",
+          "meta": "@sys.location",
+          "userDefined": true
+        }
+      ],
+      "isTemplate": false,
+      "count": 0,
+      "updated": 0,
+      "isAuto": false
+    },
+    {
+      "id": "0002046f-5de0-41ec-8bf6-56e1a186be70",
+      "data": [
+        {
+          "text": "KFC",
+          "alias": "restaurantName",
+          "meta": "@RestaurantName",
+          "userDefined": true
+        },
+        {
+          "text": " in ",
+          "userDefined": false
+        },
+        {
+          "text": "Orchard",
+          "alias": "location",
+          "meta": "@sys.location",
+          "userDefined": true
+        }
+      ],
+      "isTemplate": false,
+      "count": 0,
+      "updated": 0,
+      "isAuto": false
+    },
+    {
+      "id": "62261306-750f-4a37-b563-308435c0c78a",
+      "data": [
+        {
+          "text": "Need restaurant info",
+          "userDefined": false
+        }
+      ],
+      "isTemplate": false,
+      "count": 0,
+      "updated": 0,
+      "isAuto": false
+    },
+    {
+      "id": "bbf07c92-e3db-44ee-8f2c-bca857ad115f",
+      "data": [
+        {
+          "text": "Give me information on a restaurant",
+          "userDefined": false
+        }
+      ],
+      "isTemplate": false,
+      "count": 0,
+      "updated": 0,
+      "isAuto": false
+    },
+    {
+      "id": "60b6ae7b-3d31-45d4-87a8-26b8d81c67c8",
+      "data": [
+        {
+          "text": "Get Restaurant Info",
+          "userDefined": false
+        }
+      ],
+      "isTemplate": false,
+      "count": 0,
+      "updated": 0,
+      "isAuto": false
+    },
+    {
+      "id": "9efebbf8-50d9-4712-b73b-e4f555fb7a03",
+      "data": [
+        {
+          "text": "Restaurant Info",
+          "userDefined": false
+        }
+      ],
+      "isTemplate": false,
+      "count": 0,
+      "updated": 0,
+      "isAuto": false
+    },
+    {
+      "id": "89600735-a1b3-4816-b3d1-d18f56692ce5",
+      "data": [
+        {
+          "text": "Details of ",
+          "userDefined": false
+        },
+        {
+          "text": "Ding Tai Fung",
+          "alias": "restaurantName",
+          "meta": "@RestaurantName",
+          "userDefined": true
+        },
+        {
+          "text": " at ",
+          "userDefined": false
+        },
+        {
+          "text": "Orchard",
+          "alias": "location",
+          "meta": "@sys.location",
+          "userDefined": true
+        }
+      ],
+      "isTemplate": false,
+      "count": 0,
+      "updated": 0,
+      "isAuto": false
+    },
+    {
+      "id": "3601531e-b0ba-4e51-9a3d-3388f306a269",
+      "data": [
+        {
+          "text": "where is ",
+          "userDefined": false
+        },
+        {
+          "text": "vatos urban tacos",
+          "alias": "restaurantName",
+          "meta": "@RestaurantName",
+          "userDefined": true
+        }
+      ],
+      "isTemplate": false,
+      "count": 0,
+      "updated": 0,
+      "isAuto": false
+    },
+    {
+      "id": "18f169cc-edc8-4906-9421-41c2da3d64d8",
+      "data": [
+        {
+          "text": "I like to go to ",
+          "userDefined": false
+        },
+        {
+          "text": "Liao Fan Hawker Chan",
+          "alias": "restaurantName",
+          "meta": "@RestaurantName",
+          "userDefined": true
+        }
+      ],
+      "isTemplate": false,
+      "count": 0,
+      "updated": 0,
+      "isAuto": false
+    },
+    {
+      "id": "fecb1c29-076f-4cc1-92fa-a5f1ff4afa05",
+      "data": [
+        {
+          "text": "I would like to look for ",
+          "userDefined": false
+        },
+        {
+          "text": "Burnt Ends",
+          "alias": "restaurantName",
+          "meta": "@RestaurantName",
+          "userDefined": true
+        }
+      ],
+      "isTemplate": false,
+      "count": 0,
+      "updated": 0,
+      "isAuto": false
+    },
+    {
+      "id": "baa2a8a8-e374-4c1f-83f4-908454448e8f",
+      "data": [
+        {
+          "text": "can you tell me info on ",
+          "userDefined": false
+        },
+        {
+          "text": "The Butcher's wife",
+          "alias": "restaurantName",
+          "meta": "@RestaurantName",
+          "userDefined": true
+        }
+      ],
+      "isTemplate": false,
+      "count": 0,
+      "updated": 0,
+      "isAuto": false
+    },
+    {
+      "id": "a2d5ceae-b380-4d92-b369-06c34676005d",
+      "data": [
+        {
+          "text": "Is there ",
+          "userDefined": false
+        },
+        {
+          "text": "sushi tei",
+          "alias": "restaurantName",
+          "meta": "@RestaurantName",
+          "userDefined": false
+        }
+      ],
+      "isTemplate": false,
+      "count": 0,
+      "updated": 0,
+      "isAuto": false
+    },
+    {
+      "id": "585a4c8a-7973-4465-8a27-c77a0b8bbd4a",
+      "data": [
+        {
+          "text": "Does ",
+          "userDefined": false
+        },
+        {
+          "text": "Singapore",
+          "alias": "location",
+          "meta": "@sys.location",
+          "userDefined": true
+        },
+        {
+          "text": " have ",
+          "userDefined": false
+        },
+        {
+          "text": "Waku Ghin",
+          "alias": "restaurantName",
+          "meta": "@RestaurantName",
+          "userDefined": false
+        }
+      ],
+      "isTemplate": false,
+      "count": 0,
+      "updated": 0,
+      "isAuto": false
+    },
+    {
+      "id": "562a0624-8ab7-42bb-ba36-1bc8baf0244e",
+      "data": [
+        {
+          "text": "Can you tell me about ",
+          "userDefined": false
+        },
+        {
+          "text": "Limma",
+          "alias": "restaurantName",
+          "meta": "@RestaurantName",
+          "userDefined": true
+        }
+      ],
+      "isTemplate": false,
+      "count": 0,
+      "updated": 0,
+      "isAuto": false
+    },
+    {
+      "id": "ad8aef38-9d8c-44e5-8247-72cda372fc09",
+      "data": [
+        {
+          "text": "Famous Sungei Road Trishaw Laksa",
+          "alias": "restaurantName",
+          "meta": "@RestaurantName",
+          "userDefined": true
+        }
+      ],
+      "isTemplate": false,
+      "count": 0,
+      "updated": 0,
+      "isAuto": false
+    },
+    {
+      "id": "8371eb98-434f-414a-b0f3-02584c3721d7",
+      "data": [
+        {
+          "text": "heard of ",
+          "userDefined": false
+        },
+        {
+          "text": "Holycrab",
+          "alias": "restaurantName",
+          "meta": "@RestaurantName",
+          "userDefined": true
+        }
+      ],
+      "isTemplate": false,
+      "count": 0,
+      "updated": 0,
+      "isAuto": false
+    },
+    {
+      "id": "2635fbe1-ea5a-4812-8417-b6b388e98021",
+      "data": [
+        {
+          "text": "is there ",
+          "userDefined": false
+        },
+        {
+          "text": "Limaa",
+          "alias": "restaurantName",
+          "meta": "@RestaurantName",
+          "userDefined": true
+        },
+        {
+          "text": " restaurant here ?",
+          "userDefined": false
+        }
+      ],
+      "isTemplate": false,
+      "count": 0,
+      "updated": 0,
+      "isAuto": false
+    },
+    {
+      "id": "7ed08dde-af04-4128-ad3b-74750dbe7792",
+      "data": [
+        {
+          "text": "where is ",
+          "userDefined": false
+        },
+        {
+          "text": "Huat Huat BBQ",
+          "alias": "restaurantName",
+          "meta": "@RestaurantName",
+          "userDefined": true
+        }
+      ],
+      "isTemplate": false,
+      "count": 0,
+      "updated": 0,
+      "isAuto": false
+    },
+    {
+      "id": "caa8397b-c3e9-471c-9af9-c1e1fcf0c014",
+      "data": [
+        {
+          "text": "Zingdo Korean",
+          "alias": "restaurantName",
+          "meta": "@RestaurantName",
+          "userDefined": true
+        },
+        {
+          "text": " Restaurant",
+          "userDefined": false
+        }
+      ],
+      "isTemplate": false,
+      "count": 0,
+      "updated": 0,
+      "isAuto": false
+    },
+    {
+      "id": "470b5337-43f1-4242-991d-25e7e0cf1e84",
+      "data": [
+        {
+          "text": "Swensen",
+          "alias": "restaurantName",
+          "meta": "@RestaurantName",
+          "userDefined": true
+        },
+        {
+          "text": "'s Restaurant",
+          "userDefined": false
+        }
+      ],
+      "isTemplate": false,
+      "count": 0,
+      "updated": 0,
+      "isAuto": false
+    },
+    {
+      "id": "43dd151a-1d7d-4fe7-b229-3fc0962efe73",
+      "data": [
+        {
+          "text": "Siam Kitchen Thai",
+          "alias": "restaurantName",
+          "meta": "@RestaurantName",
+          "userDefined": true
+        },
+        {
+          "text": " Restaurant",
+          "userDefined": false
+        }
+      ],
+      "isTemplate": false,
+      "count": 0,
+      "updated": 0,
+      "isAuto": false
+    },
+    {
+      "id": "c3b7cdf2-a6ba-4d1a-a3ca-a32e1b0f14ea",
+      "data": [
+        {
+          "text": "Seoul Garden Korean BBQ",
+          "alias": "restaurantName",
+          "meta": "@RestaurantName",
+          "userDefined": true
+        }
+      ],
+      "isTemplate": false,
+      "count": 0,
+      "updated": 0,
+      "isAuto": false
+    },
+    {
+      "id": "fe2cad11-c711-4ca9-b9d6-9774b8a082bf",
+      "data": [
+        {
+          "text": "Secret Recipe Cafe",
+          "alias": "restaurantName",
+          "meta": "@RestaurantName",
+          "userDefined": true
+        }
+      ],
+      "isTemplate": false,
+      "count": 0,
+      "updated": 0,
+      "isAuto": false
+    },
+    {
+      "id": "88cbf7b9-de09-471b-abc1-c0dacfa9b0ca",
+      "data": [
+        {
+          "text": "Pizza Hut",
+          "alias": "restaurantName",
+          "meta": "@RestaurantName",
+          "userDefined": true
+        }
+      ],
+      "isTemplate": false,
+      "count": 0,
+      "updated": 0,
+      "isAuto": false
+    },
+    {
+      "id": "32c1bdfe-bdb6-4e26-97e9-96c76b3f557f",
+      "data": [
+        {
+          "text": "No Signboard Seafood",
+          "alias": "restaurantName",
+          "meta": "@RestaurantName",
+          "userDefined": true
+        },
+        {
+          "text": " Restaurant",
+          "userDefined": false
+        }
+      ],
+      "isTemplate": false,
+      "count": 0,
+      "updated": 0,
+      "isAuto": false
+    },
+    {
+      "id": "e7b009ce-80fe-497a-b441-42e53964b7cc",
+      "data": [
+        {
+          "text": "Mushroom Pot",
+          "alias": "restaurantName",
+          "meta": "@RestaurantName",
+          "userDefined": true
+        },
+        {
+          "text": " Restaurant",
+          "userDefined": false
+        }
+      ],
+      "isTemplate": false,
+      "count": 0,
+      "updated": 0,
+      "isAuto": false
+    },
+    {
+      "id": "4a5b27cb-a049-4ed3-bd94-c4cb3395e42e",
+      "data": [
+        {
+          "text": "Mushroom Park Steamboat",
+          "alias": "restaurantName",
+          "meta": "@RestaurantName",
+          "userDefined": true
+        },
+        {
+          "text": " Restaurant",
+          "userDefined": false
+        }
+      ],
+      "isTemplate": false,
+      "count": 0,
+      "updated": 0,
+      "isAuto": false
+    },
+    {
+      "id": "714d1454-bd73-475e-9d14-4ed97ccac92d",
+      "data": [
+        {
+          "text": "Mooi Chin Place",
+          "alias": "restaurantName",
+          "meta": "@RestaurantName",
+          "userDefined": true
+        },
+        {
+          "text": " Restaurant",
+          "userDefined": false
+        }
+      ],
+      "isTemplate": false,
+      "count": 0,
+      "updated": 0,
+      "isAuto": false
+    },
+    {
+      "id": "e75d4a24-0ceb-49dd-bfd6-1fccdbe16ab5",
+      "data": [
+        {
+          "text": "Marché",
+          "alias": "restaurantName",
+          "meta": "@RestaurantName",
+          "userDefined": true
+        },
+        {
+          "text": " Restaurant",
+          "userDefined": false
+        }
+      ],
+      "isTemplate": false,
+      "count": 0,
+      "updated": 0,
+      "isAuto": false
+    },
+    {
+      "id": "a91c930a-e565-494d-a2b1-5635e1a85385",
+      "data": [
+        {
+          "text": "Long John Silver's",
+          "alias": "restaurantName",
+          "meta": "@RestaurantName",
+          "userDefined": true
+        }
+      ],
+      "isTemplate": false,
+      "count": 0,
+      "updated": 0,
+      "isAuto": false
+    },
+    {
+      "id": "057705b4-9b90-4d5d-ac2f-bb801bf86ff1",
+      "data": [
+        {
+          "text": "Lemongrass Thai",
+          "alias": "restaurantName",
+          "meta": "@RestaurantName",
+          "userDefined": true
+        },
+        {
+          "text": " Restaurant",
+          "userDefined": false
+        }
+      ],
+      "isTemplate": false,
+      "count": 0,
+      "updated": 0,
+      "isAuto": false
+    },
+    {
+      "id": "dca78ce7-a74f-4d06-a170-3d46cb7f87a9",
+      "data": [
+        {
+          "text": "Sushi Jin",
+          "alias": "restaurantName",
+          "meta": "@RestaurantName",
+          "userDefined": false
+        }
+      ],
+      "isTemplate": false,
+      "count": 0,
+      "updated": 0,
+      "isAuto": false
+    },
+    {
+      "id": "2cdf9c48-6c7d-4b7a-a9e2-1d0979f19e36",
+      "data": [
+        {
+          "text": "din tai fung",
+          "alias": "restaurantName",
+          "meta": "@RestaurantName",
+          "userDefined": false
+        }
+      ],
+      "isTemplate": false,
+      "count": 0,
+      "updated": 0,
+      "isAuto": false
+    },
+    {
+      "id": "0558e8aa-d7ca-41f7-a4d3-0f3a7afe2ab0",
+      "data": [
+        {
+          "text": "Jack's Place Restaurant",
+          "alias": "restaurantName",
+          "meta": "@RestaurantName",
+          "userDefined": false
+        }
+      ],
+      "isTemplate": false,
+      "count": 0,
+      "updated": 0,
+      "isAuto": false
+    },
+    {
+      "id": "2a018c9b-e9cd-4b53-98f3-1fc1ec1bcff9",
+      "data": [
+        {
+          "text": "Kentucy Fried Chicken",
+          "alias": "restaurantName",
+          "meta": "@RestaurantName",
+          "userDefined": true
+        }
+      ],
+      "isTemplate": false,
+      "count": 0,
+      "updated": 0,
+      "isAuto": false
+    },
+    {
+      "id": "cc06ff68-725c-4295-a57e-3ce0d60d8503",
+      "data": [
+        {
+          "text": "Hong Kong Cafe",
+          "alias": "restaurantName",
+          "meta": "@RestaurantName",
+          "userDefined": false
+        }
+      ],
+      "isTemplate": false,
+      "count": 0,
+      "updated": 0,
+      "isAuto": false
+    }
+  ],
+  "followUpIntents": [],
+  "liveAgentHandoff": false,
+  "endInteraction": false,
+  "templates": []
+}

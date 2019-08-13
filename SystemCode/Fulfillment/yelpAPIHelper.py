@@ -1,6 +1,7 @@
 from urllib.parse import quote
 import requests
 import pprint
+import time
 
 
 # Using Yelp API v3
@@ -12,6 +13,9 @@ BUSINESS_PATH = '/v3/businesses/'
 # Defaults
 SEARCH_LIMIT = 5
 DEBUG_MODE = False
+
+# Cache
+Cache_Businesses = {}
 
 def yelp_request(host, path, api_key, url_params={}, debug=DEBUG_MODE):
     """Given API_KEY, send a GET request to the Yelp REST API.
@@ -29,7 +33,10 @@ def yelp_request(host, path, api_key, url_params={}, debug=DEBUG_MODE):
     headers = {'Authorization': 'Bearer %s' % api_key}
     if (debug): print(u'Querying {0} ...'.format(url))
 
+    start_time = time.time()
     response = requests.request('GET', url, headers=headers, params=url_params)
+    elasped_time = time.time() - start_time
+    if debug: print("... API call: " + url + " took " + str(elasped_time))
     if (response.headers.get("RateLimit-Remaining") == '0'):
         print("Oops.. We have exceeded Yelp Fusion API daily access limit... Please try again tomorrow!")
     return response.json()

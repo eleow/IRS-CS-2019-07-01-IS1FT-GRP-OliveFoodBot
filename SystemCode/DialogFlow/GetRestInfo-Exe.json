@@ -1,0 +1,62 @@
+{
+  "id": "7f682162-7bf2-4b91-9f2f-132349fcc3eb",
+  "name": "GetRestInfo-Exe",
+  "auto": true,
+  "contexts": [
+    "GetRestaurantInfo"
+  ],
+  "responses": [
+    {
+      "resetContexts": false,
+      "affectedContexts": [],
+      "parameters": [
+        {
+          "id": "0b0f15f4-f62f-49cd-a800-761149681abf",
+          "required": false,
+          "dataType": "@RestaurantName",
+          "name": "restaurantName",
+          "value": "#GetRestaurantInfo.restaurantName",
+          "promptMessages": [],
+          "noMatchPromptMessages": [],
+          "noInputPromptMessages": [],
+          "outputDialogContexts": [],
+          "isList": false
+        },
+        {
+          "id": "885e5658-4ed2-462a-812c-7de560446bce",
+          "required": false,
+          "dataType": "@sys.location",
+          "name": "location",
+          "value": "#GetRestaurantInfo.location",
+          "promptMessages": [],
+          "noMatchPromptMessages": [],
+          "noInputPromptMessages": [],
+          "outputDialogContexts": [],
+          "isList": false
+        }
+      ],
+      "messages": [
+        {
+          "type": 0,
+          "speech": []
+        }
+      ],
+      "defaultResponsePlatforms": {},
+      "speech": []
+    }
+  ],
+  "priority": 500000,
+  "webhookUsed": true,
+  "webhookForSlotFilling": false,
+  "fallbackIntent": false,
+  "events": [
+    {
+      "name": "actions_intent_restaurantInfo_execute"
+    }
+  ],
+  "userSays": [],
+  "followUpIntents": [],
+  "liveAgentHandoff": false,
+  "endInteraction": false,
+  "templates": []
+}
