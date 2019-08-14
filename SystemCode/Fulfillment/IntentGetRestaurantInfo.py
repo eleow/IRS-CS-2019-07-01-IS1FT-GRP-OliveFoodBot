@@ -80,14 +80,16 @@ def processRestaurantInfoConfirmIntent(req):
         returnText.append(random.choice(confirmArr))
 
         return make_response(jsonify({
-            "fulfillmentMessages": [{
-                "quickReplies": {
-                    "title": returnText,
-                    "quickReplies": [
-                        "Yes", "No"
-                    ]
+            "fulfillmentMessages": [
+                {
+                    "quickReplies": {
+                        "title": returnText,
+                        "quickReplies": [
+                            "Yes", "No"
+                        ]
+                    }
                 }
-            }]
+            ]
         }))
 
     # If it's yes, we forward back to restaurntInfo with all entities filled
@@ -207,6 +209,8 @@ def processRestaurantInfoEntryIntent(req):
 
 def processRestaurantInfoExeIntent(req):
 
+    slackBlocks = []
+
     # # Slot filling check for required parameters
     # invalid = validateParameters(req["queryResult"]["parameters"])
     # if (invalid != None):
@@ -244,6 +248,15 @@ def processRestaurantInfoExeIntent(req):
             }
         })
 
+        slackBlocks.append({
+            "type": "section",
+            "text": {
+                "type": "mrkdwn",
+                "text": "Here are your results for *" + RestaurantNameRaw + "* located in *" + address + "* 😁"
+            }
+        })
+        slackBlocks.append({"type": "divider"})
+
 
         num = 1
         for r in results:
@@ -259,11 +272,35 @@ def processRestaurantInfoExeIntent(req):
                     "buttons": [{"text": "Go to site","postback": r["website"]}]
                 }
             })
+
+            # slack specific output
+            slackBlocks.append({
+                "type": "section",
+                "text": {
+                    "type": "mrkdwn",
+                    "text": "*<%s|%s>*\n%s\n%s\nPhone: %s\n*%s*" % (r["website"], title, r["price_range"], r["address"], r["phone"], r["hours"])
+                },
+                "accessory": {
+                    "type": "image",
+                    "image_url": r["image"],
+                    "alt_text": "Thumbnail"
+                }
+            })
+            slackBlocks.append({"type": "divider"})
+
+
             num = num + 1
 
     RichMessages =  {
         # "fulfillmentText": defaultPayload,
-        "fulfillmentMessages": fulfillmentMessage
+        "fulfillmentMessages": fulfillmentMessage,
+        "payload": {
+            "slack": {
+                "attachments": [{
+                    "blocks": slackBlocks
+                }]
+            },
+        }
     }
 
     # Return the Restaurant Information
@@ -311,13 +348,14 @@ def getRestaurantInfoIntentHandler(restaurantName, location=DEFAULT_LOCATION, nu
         query_result_array = []
         for t in temp1:
             query_result_array.append({
-                "hours": "Open now" if t.get("hours", None) != None and t["hours"][0]["is_open_now"] else "Closed",
+                "hours": "Open Now" if t.get("hours", None) != None and t["hours"][0]["is_open_now"] else "Closed",
                 "name": t.get("name", ""),
-                "phone": t.get("phone", ""),
+                "phone": t.get("phone", "N/A"),
                 "address": ", ".join(t["location"]["display_address"]),
-                "price_range": t.get("price", ""),
+                "price_range": t.get("price", "N/A"),
                 "category": ", ".join(map(lambda x: x["alias"], t["categories"])),
-                "website": t.get("url", "")
+                "website": t.get("url", "N/A"),
+                "image": t.get("image_url", "")
             })
 
     # return infoCount, website, restName, address, phone, category, price_range, officeHours, take_out, delivery, reservation
