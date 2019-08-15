@@ -25,6 +25,7 @@ def webhook():
     req = request.get_json(silent=True, force=True)
     intent_name = req["queryResult"]["intent"]["displayName"]
 
+
     if ("GetRestInfo" in intent_name):
         return processRestaurantInfoIntents(req)
     elif ("Hawker Info" in intent_name):
@@ -47,5 +48,11 @@ def webhook():
 # ***************************
 # WEBHOOK MAIN ENDPOINT : END
 # ***************************
+
+import os 
+#from pml import app
+
 if __name__ == '__main__':
-   app.run(debug=True, host='0.0.0.0', port=5000)
+    port = int(os.environ.get('PORT', 5000))
+    print("Starting app on port %d" % port)
+    app.run(debug=True, host='0.0.0.0', port=port)

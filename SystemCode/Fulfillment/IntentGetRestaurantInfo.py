@@ -210,6 +210,18 @@ def processRestaurantInfoEntryIntent(req):
 def processRestaurantInfoExeIntent(req):
 
     slackBlocks = []
+    dict_stars = {
+        "0.0": "stars_0",
+        "1.0": "stars_1",
+        "1.5": "stars_1_half",
+        "2.0": "stars_2",
+        "2.5": "stars_2_half",
+        "3.0": "stars_3",
+        "3.5": "stars_3_half",
+        "4.0": "stars_4",
+        "4.5": "stars_4_half",
+        "5.0": "stars_5"
+    }
 
     # # Slot filling check for required parameters
     # invalid = validateParameters(req["queryResult"]["parameters"])
@@ -248,11 +260,16 @@ def processRestaurantInfoExeIntent(req):
             }
         })
 
+        emojiArr = ["🥣","🍝","🍲", "🍜","😋","😊","😁"]
+        emoji = random.choice(emojiArr)
+        resultText = "Here are your results for *" + RestaurantNameRaw + "* located in *" + address + "* " + emoji
+        resultText = resultText + "\nClick the restaurant name to get more info and click on address to get directions"
+
         slackBlocks.append({
             "type": "section",
             "text": {
                 "type": "mrkdwn",
-                "text": "Here are your results for *" + RestaurantNameRaw + "* located in *" + address + "* 😁"
+                "text": resultText
             }
         })
         slackBlocks.append({"type": "divider"})
@@ -263,7 +280,7 @@ def processRestaurantInfoExeIntent(req):
             # subTitle = "Address:\t %s. \nPhone:\t %s. \nPrice Range:\t %s. \nOpening Hours:\t %s. \nCategory:\t %s." % (r["address"], r["phone"], r["price_range"], r["hours"], r["category"])
             subTitle = "Address:\t %s. \nPhone:\t %s. \nPrice Range:\t %s. \nCategory:\t %s. \n%s" % (r["address"], r["phone"], r["price_range"], r["category"], r["hours"])
             title = r["name"]
-            if len(results) != 1: title = str(num) + "." + title
+            if len(results) != 1: title = str(num) + ". " + title
             # defaultPayload = "DEFAULT PAYLOAD"
             fulfillmentMessage.append({
                 "card": {
@@ -273,12 +290,25 @@ def processRestaurantInfoExeIntent(req):
                 }
             })
 
+            # form google directions url based on address
+            google_destination = urllib.quote(r["address"].replace(" ", "+"))
+            print(google_destination)
+            google_directions_url = "https://www.google.com/maps/dir/?api=1&destination="+ google_destination
+
             # slack specific output
+            # slackText = "*<%s|%s>*\n%s\n%s\nPhone: %s\n*%s*" % (r["website"], title, r["price_range"], r["address"], r["phone"], r["hours"])
+            slackText1 = "*<%s|%s>*\n" %(r["website"], title)
+            if (r["price_range"] != "N/A"): slackText1 = slackText1 + "%s" % (r["price_range"])
+            if (r["price_range"] != "N/A" and r["category"] != ""): slackText1 = slackText1 + " • "
+            if (r["category"] != ""): slackText1 = slackText1 + "%s\n" % (r["category"])
+            if (r["address"] != ""): slackText1 = slackText1 + "<%s|%s>\n" % (google_directions_url, r["address"])
+            if (r["phone"] != ""): slackText1 = slackText1 + "%s\n" % (r["phone"])
+
             slackBlocks.append({
                 "type": "section",
                 "text": {
                     "type": "mrkdwn",
-                    "text": "*<%s|%s>*\n%s\n%s\nPhone: %s\n*%s*" % (r["website"], title, r["price_range"], r["address"], r["phone"], r["hours"])
+                    "text": slackText1
                 },
                 "accessory": {
                     "type": "image",
@@ -286,10 +316,26 @@ def processRestaurantInfoExeIntent(req):
                     "alt_text": "Thumbnail"
                 }
             })
+            # slackBlocks.append({
+            #     "type": "context",
+            #     "elements": [
+            #         {
+            #             "type": "image",
+            #             "image_url": "https://f03acdae.ngrok.io/static/yelp_stars/web_and_ios/regular/regular_2_half@2x.png",
+            #             "alt_text": "Location Pin Icon"
+            #         }
+            #     ]
+            # })
+            star_url = dict_stars.get(str(r["rating"]), None)
+            if (star_url != None):
+                slackBlocks.append({
+                    "type": "image",
+                    "image_url": "https://e67cda03.ngrok.io/static/yelp_stars/" + star_url + ".png",
+                    "alt_text": "stars"
+                })
             slackBlocks.append({"type": "divider"})
-
-
             num = num + 1
+
 
     RichMessages =  {
         # "fulfillmentText": defaultPayload,
@@ -355,7 +401,10 @@ def getRestaurantInfoIntentHandler(restaurantName, location=DEFAULT_LOCATION, nu
                 "price_range": t.get("price", "N/A"),
                 "category": ", ".join(map(lambda x: x["alias"], t["categories"])),
                 "website": t.get("url", "N/A"),
-                "image": t.get("image_url", "")
+                "image": t.get("image_url", ""),
+                "review_count": t.get("review_count", "N/A"),
+                "rating": t.get("rating", "N/A"),
+                "photo": t["photos"][0] if (t.get("photos", None) != None and len(t["photos"])>=1) else None
             })
 
     # return infoCount, website, restName, address, phone, category, price_range, officeHours, take_out, delivery, reservation
