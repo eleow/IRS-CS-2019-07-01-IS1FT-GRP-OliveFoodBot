@@ -21,8 +21,9 @@ if (RUN_NGROK):
 
     dir_path = dirname(realpath(__file__))
     ngrok.DEFAULT_CONFIG_PATH = join(dir_path, "ngrok.yml")
-    ngrok.DEFAULT_NGROK_PATH = join(dir_path, "ngrok.exe")
-    tunnels = ngrok.get_tunnels(ngrok_path=join(dir_path, "ngrok.exe"))
+    # ngrok.DEFAULT_NGROK_PATH = join(dir_path, "ngrok.exe")
+    # tunnels = ngrok.get_tunnels(ngrok_path=join(dir_path, "ngrok.exe"))
+    tunnels = ngrok.get_tunnels()
     if (len(tunnels) == 0):
         public_url = ngrok.connect(port=5000, proto="http")
     else:
