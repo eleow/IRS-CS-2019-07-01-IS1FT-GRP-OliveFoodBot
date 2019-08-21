@@ -12,6 +12,9 @@ import argparse
 from IntentGetRestaurantInfo import processRestaurantInfoIntents
 from IntentGetHawkerInfo import processHawkerInfoIntent
 
+# import colorama
+# colorama.init()
+
 # For running ngok directly from python
 RUN_NGROK = True
 public_url = ""

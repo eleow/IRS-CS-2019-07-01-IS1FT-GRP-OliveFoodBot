@@ -107,4 +107,4 @@ venv.bak/
 SystemCode/Fulfillment/static/yelp_stars/android
 SystemCode/Fulfillment/static/yelp_stars/web_and_ios
 SystemCode/Fulfillment/static/yelp_logo_tm
-SystemCode/Fulfillment/__misc
+**/_Misc/
