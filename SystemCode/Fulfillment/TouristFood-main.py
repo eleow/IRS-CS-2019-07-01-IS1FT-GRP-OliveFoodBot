@@ -20,6 +20,9 @@ limit = 5
 budgetDict = {"mid-range": 2, "expensive": 3, "veryexpensive": 4}
 
 
+# import colorama
+# colorama.init()
+
 # For running ngok directly from python
 RUN_NGROK = True
 public_url = ""

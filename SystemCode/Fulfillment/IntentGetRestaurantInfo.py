@@ -17,6 +17,7 @@ DEFAULT_LOCATION = "Singapore"
 DEBUG_MODE = False
 public_url = ""
 
+
 # **********************
 # UTIL FUNCTIONS : END
 # **********************
@@ -227,17 +228,30 @@ def processRestaurantInfoExeIntent(req):
                 "text": ["No businesses for " + RestaurantNameRaw + " in " + address + " found."]}
             }
         ]
-
         RichMessages = {
              "fulfillmentMessages": fulfillmentMessage
+        }
+    elif (isinstance(results, int)):
+        # Error code. 1 - Exceeded daily-limits calls
+        if (results == 1): fulText = "It appears that our magic server is overloaded. Please try again tomorrow"
+        else: fulText = "We have ran into an unknown problem. Please try again later."
+        RichMessages = {
+            "fulfillmentMessages": [
+                { "text": {
+                    "text": [fulText]
+                    }
+                }
+            ]
         }
 
     else:
         default_msg = "Here are your results for " + RestaurantNameRaw + " located in " + address
 
+        magArr = ["✨Presto!", "✨Abracadabra!", "✨Swish!" "✨Accio!"]
+        mag = random.choice(magArr)
         emojiArr = ["🥣","🍝","🍲", "🍜","😋","😊","😁"]
         emoji = random.choice(emojiArr)
-        resultText = "Here are your results for *" + RestaurantNameRaw + "* located in *" + address + "* " + emoji
+        resultText = mag + " Here are your results for *" + RestaurantNameRaw + "* located in *" + address + "* " + emoji
 
         RichMessages = displayResults_slack(results, public_url, resultText, default_msg)
 
@@ -275,7 +289,9 @@ def getRestaurantInfoIntentHandler(restaurantName, location=DEFAULT_LOCATION, nu
         return None
 
     if (temp1 == None): return None
-    else:
+    elif (isinstance(temp1, int)):
+        return temp1
+    elif (isinstance(temp1, list)):
         query_result_array = []
         for t in temp1:
             query_result_array.append({

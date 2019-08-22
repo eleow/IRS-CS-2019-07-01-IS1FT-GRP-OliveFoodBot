@@ -36,7 +36,7 @@ def yelp_request(host, path, api_key, url_params={}, debug=DEBUG_MODE):
     start_time = time.time()
     response = requests.request('GET', url, headers=headers, params=url_params)
     elasped_time = time.time() - start_time
-    if debug: print("... API call: " + url + " took " + str(elasped_time))
+    if debug: print("... API call: " + url + " took " + str(elasped_time) + ". RateLimit-Remaining: " + response.headers.get("RateLimit-Remaining"))
     if (response.headers.get("RateLimit-Remaining") == '0'):
         print("Oops.. We have exceeded Yelp Fusion API daily access limit... Please try again tomorrow!")
     return response.json()
@@ -74,14 +74,21 @@ def yelp_query_api(term, location, debug=DEBUG_MODE, num_results=1):
     Returns:
         array of responses that match num_results
     """
-    # Check if this business exists. If exists, we get its ID
     response = yelp_search(YELP_API_KEY, term, location, debug)
-    businesses = response.get('businesses')
 
+    # Check if daily access limit has been reached
+    # https://www.yelp.com/developers/documentation/v3/rate_limiting
+    if ("error" in response):
+        if (response["error"].get("code") == "ACCESS_LIMIT_REACHED"):
+            return 1
+        else:
+            return 2
+
+    # Check if this business exists. If exists, we get its ID
+    businesses = response.get('businesses')
     if not businesses:
         print(u'No businesses for {0} in {1} found.'.format(term, location))
         return None
-
 
     # If exists, then we get its details
     num_results = min(len(businesses), num_results)
