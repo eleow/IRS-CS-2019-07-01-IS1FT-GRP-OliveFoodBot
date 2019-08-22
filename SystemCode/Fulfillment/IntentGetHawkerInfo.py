@@ -4,7 +4,7 @@ import json
 
 from lxml import html
 import urllib.parse as urllib
-from urllib.error import HTTPError
+from urllib.error import HTTPError, URLError
 from urllib.parse import quote
 from urllib.parse import urlencode
 

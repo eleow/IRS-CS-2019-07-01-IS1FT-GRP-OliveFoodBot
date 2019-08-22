@@ -41,7 +41,11 @@ def getPopularDiningIntentHandler(PARAMETERS):
     print(biz_array)
     return biz_array
 
-def response(dining, PARAMETERS):
+def processPopularDiningIntent(dining, PARAMETERS, url):
+# def response(dining, PARAMETERS):_
+    global public_url
+    public_url = url
+
     results = getPopularDiningIntentHandler(PARAMETERS)
     #print(results)
     if len(results) > 0:

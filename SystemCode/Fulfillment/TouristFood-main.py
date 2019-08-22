@@ -11,7 +11,7 @@ import argparse
 
 from IntentGetRestaurantInfo import processRestaurantInfoIntents
 from IntentGetHawkerInfo import processHawkerInfoIntent
-from restaurantsIntents import *
+from restaurantsIntents import processPopularDiningIntent
 from richMessageHelper import displayWelcome_slack
 
 API_KEY = 'rG5TOrDyCq0G-lIelg9XzKfBcSNrc2F7zsa3C99Nray3q_-Wz8YU1Jdi1rAu7-gSQwdKCuZA0b9GXCp5xMImW9_dxQo_9ib4OAJ-PXRyqPGakfQD8WHL8BX7uDNJXXYx'
@@ -63,20 +63,21 @@ def webhook():
         return processHawkerInfoIntent(req)
 
     elif action in ["WELCOME"] or "Default Welcome Intent" in intent_name:
-        additional_header = None if not req["queryResult"].get("outputContexts") else "I am sorry, but I could not understand. Try rephasing your query."
+        wasRedirected = (req["queryResult"].get("outputContexts") != None and any("welcome" in d["name"] for d in req["queryResult"].get("outputContexts")))
+        additional_header = None if not wasRedirected else "I am sorry, but I could not understand. Try rephasing your query."
         return make_response(jsonify(displayWelcome_slack(public_url, additional_header = additional_header)))
 
     elif action in ["getOpenedHawkerCentres", "getOpenedHawkerCentres2"]:
         dining = [context["parameters"]["hawkerCentre"] for context in req["queryResult"]["outputContexts"] if "session_var" in context["name"]].pop()
         PARAMETERS = {"term": dining, "is_closed": "False", "limit": limit, "sort_by": "rating", "price":1, "location": "Singapore"}
-        return response(dining, PARAMETERS)
+        return processPopularDiningIntent(dining, PARAMETERS, public_url)
 
     elif action in ["getAllHawkerCentres", "getAllHawkerCentres2"]:
         dining = [context["parameters"]["hawkerCentre"] for context in req["queryResult"]["outputContexts"] if "session_var" in context["name"]].pop()
         PARAMETERS = {"term": dining, "limit": limit, "sort_by": "rating", "price":1, "location": "Singapore"}
-        return response(dining, PARAMETERS)
+        return processPopularDiningIntent(dining, PARAMETERS, public_url)
 
-    elif action in ["getOpenedRestaurants", "getRestaurantsBudgetLast", "getRestaurantsCuisineLast"]:
+    elif action in ["getOpenedRestaurants", "getRestaurantsBudgetLast", "getRestaurantsCuisineLast", "getOpenedRestaurantsComplete"]:
         if action == "getOpenRestaurants":
             onlyOpened = req["queryResult"]["parameters"]["onlyOpened"]
         else:
@@ -87,9 +88,9 @@ def webhook():
             cuisine = [context["parameters"]["cuisine"] for context in req["queryResult"]["outputContexts"] if "session_var" in context["name"]].pop()
             budget = [context["parameters"]["budget"] for context in req["queryResult"]["outputContexts"] if "session_var" in context["name"]].pop()
             PARAMETERS = {"term": dining, "categories": cuisine, "is_closed": "False", "limit": limit, "sort_by": "rating", "price":budgetDict[budget.replace(" ", "")], "location": "Singapore"}
-            return response(dining, PARAMETERS)
+            return processPopularDiningIntent(dining, PARAMETERS, public_url)
 
-    elif action in ["getAllRestaurants", "getRestaurantsBudgetLast", "getRestaurantsCuisineLast"]:
+    elif action in ["getAllRestaurants", "getRestaurantsBudgetLast", "getRestaurantsCuisineLast", "getAllRestaurantsComplete"]:
         onlyOpened = [context["parameters"]["onlyOpened"] for context in req["queryResult"]["outputContexts"] if "session_var" in context["name"]].pop()
         if action == "getAllRestaurants":
             onlyOpened = req["queryResult"]["parameters"]["onlyOpened"]
@@ -101,7 +102,7 @@ def webhook():
             cuisine = [context["parameters"]["cuisine"] for context in req["queryResult"]["outputContexts"] if "session_var" in context["name"]].pop()
             budget = [context["parameters"]["budget"] for context in req["queryResult"]["outputContexts"] if "session_var" in context["name"]].pop()
             PARAMETERS = {"term": dining, "categories": cuisine, "limit": limit, "sort_by": "rating", "price":budgetDict[budget.replace(" ", "")], "location": "Singapore"}
-            return response(dining, PARAMETERS)
+            return processPopularDiningIntent(dining, PARAMETERS, public_url)
     else:
         # Cannot understand. Just redirect to welcome screen
         followupEvent = {"name": "WELCOME",

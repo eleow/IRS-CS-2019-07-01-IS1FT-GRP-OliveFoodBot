@@ -157,7 +157,7 @@ def displayResults_slack(results, public_url, header_msg, default_header_msg = N
         if (r["category"] != ""): slackText1 = slackText1 + "%s\n" % (r["category"])
         if (r["address"] != ""): slackText1 = slackText1 + "<%s|%s>\n" % (google_directions_url, r["address"])
         if (r["phone"] != ""): slackText1 = slackText1 + "%s\n" % (r["phone"])
-        if (use_is_closed and r["is_closed"] != ""): slackText1 = slackText1 + "%s\n" % (r["is_closed"])
+        if (use_is_closed and r["is_closed"] != ""): slackText1 = slackText1 + "%s\n" % ("Closed now" if r["is_closed"] == "True" else "Open now")
 
 
         slackBlocks.append({

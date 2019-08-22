@@ -283,7 +283,7 @@ def getRestaurantInfoIntentHandler(restaurantName, location=DEFAULT_LOCATION, nu
     """
 
     try:
-        temp1 = yelp_query_api(restaurantName, location, num_results=num_results, debug=False)
+        temp1 = yelp_query_api(restaurantName, location, num_results=num_results, debug=DEBUG_MODE)
     except HTTPError as error:
         if (DEBUG_MODE): print("HTTP ERROR! " + error.code)
         return None

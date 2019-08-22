@@ -36,7 +36,7 @@ def yelp_request(host, path, api_key, url_params={}, debug=DEBUG_MODE):
     start_time = time.time()
     response = requests.request('GET', url, headers=headers, params=url_params)
     elasped_time = time.time() - start_time
-    if debug: print("... API call: " + url + " took " + str(elasped_time) + ". RateLimit-Remaining: " + response.headers.get("RateLimit-Remaining"))
+    print("... API call: " + url + " took " + str(elasped_time) + ". RateLimit-Remaining: " + response.headers.get("RateLimit-Remaining"))
     if (response.headers.get("RateLimit-Remaining") == '0'):
         print("Oops.. We have exceeded Yelp Fusion API daily access limit... Please try again tomorrow!")
     return response.json()
