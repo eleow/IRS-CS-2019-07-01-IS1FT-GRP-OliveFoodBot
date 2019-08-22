@@ -93,7 +93,7 @@ def displayWelcome_slack(public_url, default_header_msg = None, additional_heade
     return RichMessages
 
 
-def displayResults_slack(results, public_url, header_msg, default_header_msg = None):
+def displayResults_slack(results, public_url, header_msg, default_header_msg = None, use_is_closed = False):
     fulfillmentMessage = []
     slackBlocks = []
     dict_stars = {
@@ -128,7 +128,11 @@ def displayResults_slack(results, public_url, header_msg, default_header_msg = N
 
     num = 1
     for r in results:
-        subTitle = "Address:\t %s. \nPhone:\t %s. \nPrice Range:\t %s. \nCategory:\t %s. \n%s" % (r["address"], r["phone"], r["price_range"], r["category"], r["hours"])
+        if use_is_closed:
+            subTitle = "Address:\t %s. \nPhone:\t %s. \nPrice Range:\t %s. \nCategory:\t %s. \nClosed:\t %s" % (r["address"], r["phone"], r["price_range"], r["category"], r["is_closed"])
+        else:
+            subTitle = "Address:\t %s. \nPhone:\t %s. \nPrice Range:\t %s. \nCategory:\t %s. \n%s" % (r["address"], r["phone"], r["price_range"], r["category"], r["hours"])
+
         title = r["name"]
         if len(results) != 1: title = str(num) + ". " + title # Display count only if there is more than 1 result
 
@@ -153,6 +157,8 @@ def displayResults_slack(results, public_url, header_msg, default_header_msg = N
         if (r["category"] != ""): slackText1 = slackText1 + "%s\n" % (r["category"])
         if (r["address"] != ""): slackText1 = slackText1 + "<%s|%s>\n" % (google_directions_url, r["address"])
         if (r["phone"] != ""): slackText1 = slackText1 + "%s\n" % (r["phone"])
+        if (use_is_closed and r["is_closed"] != ""): slackText1 = slackText1 + "%s\n" % (r["is_closed"])
+
 
         slackBlocks.append({
             "type": "section",

@@ -9,7 +9,7 @@ Created on Wed Aug 21 14:03:15 2019
 
 from flask import make_response, jsonify
 from yelpAPIHelper import yelp_request
-from richMessageHelper2 import displayResults_slack2
+from richMessageHelper import displayResults_slack
 
 YELP_API_KEY = "rG5TOrDyCq0G-lIelg9XzKfBcSNrc2F7zsa3C99Nray3q_-Wz8YU1Jdi1rAu7-gSQwdKCuZA0b9GXCp5xMImW9_dxQo_9ib4OAJ-PXRyqPGakfQD8WHL8BX7uDNJXXYx"
 API_HOST = 'https://api.yelp.com'
@@ -19,9 +19,9 @@ BUSINESS_PATH = '/v3/businesses/'
 DEBUG_MODE = False
 public_url = ""
 
-def getPopularDiningIntentHandler(PARAMETERS):       
+def getPopularDiningIntentHandler(PARAMETERS):
     business_data = yelp_request(API_HOST, SEARCH_PATH, YELP_API_KEY, PARAMETERS, debug=DEBUG_MODE)
-    biz_array = []   
+    biz_array = []
     if business_data["total"] > 0:
         for biz in business_data["businesses"]:
             #bizDict["hours"].append("Open Now" if biz.get("hours", None) != None and biz["hours"][0]["is_open_now"] else "Closed")
@@ -45,7 +45,7 @@ def response(dining, PARAMETERS):
     results = getPopularDiningIntentHandler(PARAMETERS)
     #print(results)
     if len(results) > 0:
-        rich_messages = displayResults_slack2(results, public_url, "Popular " + dining + "s", default_header_msg = None)
+        rich_messages = displayResults_slack(results, public_url, "Popular " + dining + "s", default_header_msg = None, use_is_closed=True)
     else:
         rich_messages = {"fulfillmentText": "no results were found."}
     return make_response(jsonify(rich_messages))
