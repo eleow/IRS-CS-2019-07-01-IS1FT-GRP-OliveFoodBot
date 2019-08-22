@@ -11,6 +11,14 @@ import argparse
 
 from IntentGetRestaurantInfo import processRestaurantInfoIntents
 from IntentGetHawkerInfo import processHawkerInfoIntent
+from restaurantsIntents import *
+
+API_KEY = 'rG5TOrDyCq0G-lIelg9XzKfBcSNrc2F7zsa3C99Nray3q_-Wz8YU1Jdi1rAu7-gSQwdKCuZA0b9GXCp5xMImW9_dxQo_9ib4OAJ-PXRyqPGakfQD8WHL8BX7uDNJXXYx'
+ENDPOINT = 'https://api.yelp.com/v3/businesses/search'
+HEADERS = {'Authorization':'bearer %s' %API_KEY}
+limit = 5
+budgetDict = {"mid-range": 2, "expensive": 3, "veryexpensive": 4}
+
 
 # For running ngok directly from python
 RUN_NGROK = True
@@ -40,33 +48,44 @@ app = Flask(__name__)
 def webhook():
     req = request.get_json(silent=True, force=True)
     intent_name = req["queryResult"]["intent"]["displayName"]
-
-
+    action = req["queryResult"]["action"]
+    
     if ("GetRestInfo" in intent_name):
         return processRestaurantInfoIntents(req, public_url)
     elif ("Hawker Info" in intent_name):
         return processHawkerInfoIntent(req)
-    else:
-        fulfillmentText = "Unable to find a matching intent. Try again."
-        # return make_response(jsonify({'fulfillmentText': RichMessages}))
-        return make_response(jsonify({
-            "fulfillmentText": fulfillmentText,
-            "fulfillmentMessages": [
-                {
-                  "text": {"text": ["Sorry, I am unable to understand. Please choose one of the options below:"]}
-                },
-                {
-                    "quickReplies": {"quickReplies": ["Get Restaurant Info", "Top 50 Restaurants", "Cheap and Good Food"]}
-                }
-            ]
-        }))
 
-# from flask import render_template
-# @app.route('/debug')
-# def test():
-#     message = "TEST DEBUG"
-#     return render_template('index.html', message=message, img="/static/yelp_stars/stars_2_half.png")
-
+    elif action in ["getOpenedHawkerCentres", "getOpenedHawkerCentres2"]:
+        dining = [context["parameters"]["hawkerCentre"] for context in req["queryResult"]["outputContexts"] if "session_var" in context["name"]].pop()
+        PARAMETERS = {"term": dining, "is_closed": "False", "limit": limit, "sort_by": "rating", "price":1, "location": "Singapore"}
+        return response(dining, PARAMETERS)
+    
+    elif action in ["getAllHawkerCentres", "getAllHawkerCentres2"]:
+        dining = [context["parameters"]["hawkerCentre"] for context in req["queryResult"]["outputContexts"] if "session_var" in context["name"]].pop()
+        PARAMETERS = {"term": dining, "limit": limit, "sort_by": "rating", "price":1, "location": "Singapore"}
+        return response(dining, PARAMETERS)
+        
+    elif action in ["getOpenedRestaurants", "getRestaurantsBudgetLast", "getRestaurantsCuisineLast"]:
+        onlyOpened = [context["parameters"]["onlyOpened"] for context in req["queryResult"]["outputContexts"] if "session_var" in context["name"]].pop()
+        if onlyOpened == "True":
+            print("only opened restaurants!!")
+            dining = [context["parameters"]["restaurant"] for context in req["queryResult"]["outputContexts"] if "session_var" in context["name"]].pop()
+            cuisine = [context["parameters"]["cuisine"] for context in req["queryResult"]["outputContexts"] if "session_var" in context["name"]].pop()
+            budget = [context["parameters"]["budget"] for context in req["queryResult"]["outputContexts"] if "session_var" in context["name"]].pop()        
+            PARAMETERS = {"term": dining, "categories": cuisine, "is_closed": "False", "limit": limit, "sort_by": "rating", "price":budgetDict[budget.replace(" ", "")], "location": "Singapore"}
+            return response(dining, PARAMETERS)
+    
+    elif action in ["getAllRestaurants", "getRestaurantsBudgetLast", "getRestaurantsCuisineLast"]:
+        onlyOpened = [context["parameters"]["onlyOpened"] for context in req["queryResult"]["outputContexts"] if "session_var" in context["name"]].pop()
+        if onlyOpened == "False":
+            print("all restaurants!!")
+            dining = [context["parameters"]["restaurant"] for context in req["queryResult"]["outputContexts"] if "session_var" in context["name"]].pop()
+            cuisine = [context["parameters"]["cuisine"] for context in req["queryResult"]["outputContexts"] if "session_var" in context["name"]].pop()
+            budget = [context["parameters"]["budget"] for context in req["queryResult"]["outputContexts"] if "session_var" in context["name"]].pop()
+            PARAMETERS = {"term": dining, "categories": cuisine, "limit": limit, "sort_by": "rating", "price":budgetDict[budget.replace(" ", "")], "location": "Singapore"}
+            return response(dining, PARAMETERS)
+ 
+    
 
 
 # ***************************
