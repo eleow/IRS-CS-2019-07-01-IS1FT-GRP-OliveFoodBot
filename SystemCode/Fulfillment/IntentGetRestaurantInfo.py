@@ -247,7 +247,7 @@ def processRestaurantInfoExeIntent(req):
     else:
         default_msg = "Here are your results for " + RestaurantNameRaw + " located in " + address
 
-        magArr = ["✨Presto!", "✨Abracadabra!", "✨Swish!" "✨Accio!"]
+        magArr = ["✨Presto!", "✨Abracadabra!", "✨Swish!", "✨Accio!"]
         mag = random.choice(magArr)
         emojiArr = ["🥣","🍝","🍲", "🍜","😋","😊","😁"]
         emoji = random.choice(emojiArr)

@@ -1,4 +1,97 @@
 import urllib.parse as urllib
+import random
+
+def displayWelcome_slack(public_url, default_header_msg = None, additional_header = None):
+    fulfillmentMessage = []
+    slackBlocks = []
+
+    # Components of introduction message
+    introArr = [
+        "Hi! I am Olive, your personal foodBot for Singapore food! 👩 ",
+        "Hello there! I am Olive, the foodBot for Singapore food 😋 ",
+        "👋 I am Olive. How can I help you today? 😊 ",
+    ]
+    intro = random.choice(introArr) if not additional_header else additional_header
+
+    eg1 = random.choice(["Din Tai Fung in Orchard", "Swensens in Clementi"])
+    eg2 = "Find popular eateries"
+    eg3 = random.choice(["What is Laksa?", "What is Claypot Rice?"])
+    intro2 = "• Recommend a dining place. (eg _%s_)\n• Get a specific restaurant's details such as its location and rating. (eg _%s_)\n• Tell you about specific local food in Singapore. (eg _%s_)\n" % (eg1, eg2, eg3)
+
+    body2 = "Or just click one of the buttons below:"
+
+    header_msg1 = intro + "\n\nHere's a couple of the things I can do:\n" +intro2
+    header_msg = header_msg1 + "\n\n" + body2
+
+    # Show header message with a varying image url from 1-9
+    img_num = random.randint(1, 9)
+    image_url = "https://www.secretfoodtours.com/images/singapore/singapore-tours-" + str(img_num) + ".jpg"
+    slackBlocks.append({
+        "type": "section",
+        "text": {
+            "type": "mrkdwn",
+            "text": header_msg
+        },
+        "accessory": {
+            "type": "image",
+            "image_url": image_url,
+            "alt_text": "Thumbnail"
+        }
+    })
+    slackBlocks.append({"type": "divider"})
+
+    # Show buttons
+    slackBlocks.append({
+        "type": "actions",
+        "elements": [
+            {
+                "type": "button",
+                "text": {
+                    "type": "plain_text",
+                    "text": "Get eatery information"
+                },
+                "value": "Get restaurant info"
+            },
+            {
+                "type": "button",
+                "text": {
+                    "type": "plain_text",
+                    "text": "Find popular hawker centres"
+                },
+                "value": "Find popular hawker centres"
+            },
+            {
+                "type": "button",
+                "text": {
+                    "type": "plain_text",
+                    "text": "Find popular restaurants"
+                },
+                "value": "Find popular restaurants"
+            }
+        ]
+    })
+
+
+    if (default_header_msg == None): default_header_msg = header_msg1
+    fulfillmentMessage.append({
+        "text": {
+            "text": [default_header_msg]
+        }
+    })
+
+    RichMessages =  {
+        # "fulfillmentText": defaultPayload,
+        "fulfillmentMessages": fulfillmentMessage,
+        "payload": {
+            "slack": {
+                "attachments": [{
+                    "blocks": slackBlocks
+                }]
+            },
+        }
+    }
+    return RichMessages
+
 
 def displayResults_slack(results, public_url, header_msg, default_header_msg = None):
     fulfillmentMessage = []
