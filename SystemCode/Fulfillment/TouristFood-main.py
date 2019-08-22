@@ -77,7 +77,10 @@ def webhook():
         return response(dining, PARAMETERS)
 
     elif action in ["getOpenedRestaurants", "getRestaurantsBudgetLast", "getRestaurantsCuisineLast"]:
-        onlyOpened = [context["parameters"]["onlyOpened"] for context in req["queryResult"]["outputContexts"] if "session_var" in context["name"]].pop()
+        if action == "getOpenRestaurants":
+            onlyOpened = req["queryResult"]["parameters"]["onlyOpened"]
+        else:
+            onlyOpened = [context["parameters"]["onlyOpened"] for context in req["queryResult"]["outputContexts"] if "session_var" in context["name"]].pop()
         if onlyOpened == "True":
             print("only opened restaurants!!")
             dining = [context["parameters"]["restaurant"] for context in req["queryResult"]["outputContexts"] if "session_var" in context["name"]].pop()
@@ -88,6 +91,10 @@ def webhook():
 
     elif action in ["getAllRestaurants", "getRestaurantsBudgetLast", "getRestaurantsCuisineLast"]:
         onlyOpened = [context["parameters"]["onlyOpened"] for context in req["queryResult"]["outputContexts"] if "session_var" in context["name"]].pop()
+        if action == "getAllRestaurants":
+            onlyOpened = req["queryResult"]["parameters"]["onlyOpened"]
+        else:
+            onlyOpened = [context["parameters"]["onlyOpened"] for context in req["queryResult"]["outputContexts"] if "session_var" in context["name"]].pop()
         if onlyOpened == "False":
             print("all restaurants!!")
             dining = [context["parameters"]["restaurant"] for context in req["queryResult"]["outputContexts"] if "session_var" in context["name"]].pop()
