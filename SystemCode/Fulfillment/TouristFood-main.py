@@ -50,7 +50,7 @@ if (RUN_NGROK):
     print(" Flask will be run from ngrok")
     print("--------------------------------------------------------------------")
 else:
-    public_url = "https://secure-beach-27150.herokuapp.com/" # Use heroku url
+    public_url = "https://olivefoodbot.herokuapp.com" # Use heroku url
     print("--------------------------------------------------------------------")
     print(" Flask will be run from Heroku")
     print("--------------------------------------------------------------------")
