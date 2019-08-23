@@ -20,12 +20,18 @@ HEADERS = {'Authorization':'bearer %s' %API_KEY}
 limit = 5
 budgetDict = {"mid-range": 2, "expensive": 3, "veryexpensive": 4}
 
+global RUN_NGROK
+RUN_NGROK = True
+import sys
+if len(sys.argv) == 2:
+  RUN_NGROK = False if sys.argv[1] != '1' else True
+
+
 
 # import colorama
 # colorama.init()
 
 # For running ngok directly from python
-RUN_NGROK = True
 public_url = ""
 if (RUN_NGROK):
     from pyngrok import ngrok
@@ -40,77 +46,89 @@ if (RUN_NGROK):
         public_url = ngrok.connect(port=5000, proto="http")
     else:
         public_url = tunnels[0].public_url
-    print(" * PUBLIC URL: " + public_url)
+    print("--------------------------------------------------------------------")
+    print(" Flask will be run from ngrok")
+    print("--------------------------------------------------------------------")
 else:
     public_url = "https://secure-beach-27150.herokuapp.com/" # Use heroku url
+    print("--------------------------------------------------------------------")
+    print(" Flask will be run from Heroku")
+    print("--------------------------------------------------------------------")
 
+print(" * PUBLIC URL: " + public_url)
 app = Flask(__name__)
 
 
 # *****************************
 # WEBHOOK MAIN ENDPOINT : START
 # *****************************
-@app.route('/', methods=['POST'])
+from flask import render_template
+@app.route('/', methods=['POST', 'GET'])
 def webhook():
-    req = request.get_json(silent=True, force=True)
-    intent_name = req["queryResult"]["intent"]["displayName"]
-    action = req["queryResult"].get("action", None)
+    if (request.method == 'GET'):
+        message = "Flash Webhook is running @ " + public_url
+        return render_template('index.html', message=message, img="/static/olive.png")
 
-    if ("GetRestInfo" in intent_name):
-        return processRestaurantInfoIntents(req, public_url)
+    elif (request.method == 'POST'):
+        req = request.get_json(silent=True, force=True)
+        intent_name = req["queryResult"]["intent"]["displayName"]
+        action = req["queryResult"].get("action", None)
 
-    elif ("Hawker Info" in intent_name):
-        return processHawkerInfoIntent(req)
+        if ("GetRestInfo" in intent_name):
+            return processRestaurantInfoIntents(req, public_url)
 
-    elif action in ["WELCOME"] or "Default Welcome Intent" in intent_name:
-        wasRedirected = (req["queryResult"].get("outputContexts") != None and any("welcome" in d["name"] for d in req["queryResult"].get("outputContexts")))
-        additional_header = None if not wasRedirected else "I am sorry, but I could not understand. Try rephasing your query."
-        return make_response(jsonify(displayWelcome_slack(public_url, additional_header = additional_header)))
+        elif ("Hawker Info" in intent_name):
+            return processHawkerInfoIntent(req)
 
-    elif action in ["getOpenedHawkerCentres", "getOpenedHawkerCentres2"]:
-        dining = [context["parameters"]["hawkerCentre"] for context in req["queryResult"]["outputContexts"] if "session_var" in context["name"]].pop()
-        PARAMETERS = {"term": dining, "is_closed": "False", "limit": limit, "sort_by": "rating", "price":1, "location": "Singapore"}
-        return processPopularDiningIntent(dining, PARAMETERS, public_url)
+        elif action in ["WELCOME"] or "Default Welcome Intent" in intent_name:
+            wasRedirected = (req["queryResult"].get("outputContexts") != None and any("welcome" in d["name"] for d in req["queryResult"].get("outputContexts")))
+            additional_header = None if not wasRedirected else "I am sorry, but I could not understand. Try rephasing your query."
+            return make_response(jsonify(displayWelcome_slack(public_url, additional_header = additional_header)))
 
-    elif action in ["getAllHawkerCentres", "getAllHawkerCentres2"]:
-        dining = [context["parameters"]["hawkerCentre"] for context in req["queryResult"]["outputContexts"] if "session_var" in context["name"]].pop()
-        PARAMETERS = {"term": dining, "limit": limit, "sort_by": "rating", "price":1, "location": "Singapore"}
-        return processPopularDiningIntent(dining, PARAMETERS, public_url)
-
-    elif action in ["getOpenedRestaurants", "getRestaurantsBudgetLast", "getRestaurantsCuisineLast", "getOpenedRestaurantsComplete"]:
-        if action == "getOpenRestaurants":
-            onlyOpened = req["queryResult"]["parameters"]["onlyOpened"]
-        else:
-            onlyOpened = [context["parameters"]["onlyOpened"] for context in req["queryResult"]["outputContexts"] if "session_var" in context["name"]].pop()
-        if onlyOpened == "True":
-            print("only opened restaurants!!")
-            dining = [context["parameters"]["restaurant"] for context in req["queryResult"]["outputContexts"] if "session_var" in context["name"]].pop()
-            cuisine = [context["parameters"]["cuisine"] for context in req["queryResult"]["outputContexts"] if "session_var" in context["name"]].pop()
-            budget = [context["parameters"]["budget"] for context in req["queryResult"]["outputContexts"] if "session_var" in context["name"]].pop()
-            PARAMETERS = {"term": dining, "categories": cuisine, "is_closed": "False", "limit": limit, "sort_by": "rating", "price":budgetDict[budget.replace(" ", "")], "location": "Singapore"}
+        elif action in ["getOpenedHawkerCentres", "getOpenedHawkerCentres2"]:
+            dining = [context["parameters"]["hawkerCentre"] for context in req["queryResult"]["outputContexts"] if "session_var" in context["name"]].pop()
+            PARAMETERS = {"term": dining, "is_closed": "False", "limit": limit, "sort_by": "rating", "price":1, "location": "Singapore"}
             return processPopularDiningIntent(dining, PARAMETERS, public_url)
 
-    elif action in ["getAllRestaurants", "getRestaurantsBudgetLast", "getRestaurantsCuisineLast", "getAllRestaurantsComplete"]:
-        onlyOpened = [context["parameters"]["onlyOpened"] for context in req["queryResult"]["outputContexts"] if "session_var" in context["name"]].pop()
-        if action == "getAllRestaurants":
-            onlyOpened = req["queryResult"]["parameters"]["onlyOpened"]
-        else:
-            onlyOpened = [context["parameters"]["onlyOpened"] for context in req["queryResult"]["outputContexts"] if "session_var" in context["name"]].pop()
-        if onlyOpened == "False":
-            print("all restaurants!!")
-            dining = [context["parameters"]["restaurant"] for context in req["queryResult"]["outputContexts"] if "session_var" in context["name"]].pop()
-            cuisine = [context["parameters"]["cuisine"] for context in req["queryResult"]["outputContexts"] if "session_var" in context["name"]].pop()
-            budget = [context["parameters"]["budget"] for context in req["queryResult"]["outputContexts"] if "session_var" in context["name"]].pop()
-            PARAMETERS = {"term": dining, "categories": cuisine, "limit": limit, "sort_by": "rating", "price":budgetDict[budget.replace(" ", "")], "location": "Singapore"}
+        elif action in ["getAllHawkerCentres", "getAllHawkerCentres2"]:
+            dining = [context["parameters"]["hawkerCentre"] for context in req["queryResult"]["outputContexts"] if "session_var" in context["name"]].pop()
+            PARAMETERS = {"term": dining, "limit": limit, "sort_by": "rating", "price":1, "location": "Singapore"}
             return processPopularDiningIntent(dining, PARAMETERS, public_url)
-    else:
-        # Cannot understand. Just redirect to welcome screen
-        followupEvent = {"name": "WELCOME",
-            "parameters": {
-                "unknown": True
+
+        elif action in ["getOpenedRestaurants", "getRestaurantsBudgetLast", "getRestaurantsCuisineLast", "getOpenedRestaurantsComplete"]:
+            if action == "getOpenRestaurants":
+                onlyOpened = req["queryResult"]["parameters"]["onlyOpened"]
+            else:
+                onlyOpened = [context["parameters"]["onlyOpened"] for context in req["queryResult"]["outputContexts"] if "session_var" in context["name"]].pop()
+            if onlyOpened == "True":
+                print("only opened restaurants!!")
+                dining = [context["parameters"]["restaurant"] for context in req["queryResult"]["outputContexts"] if "session_var" in context["name"]].pop()
+                cuisine = [context["parameters"]["cuisine"] for context in req["queryResult"]["outputContexts"] if "session_var" in context["name"]].pop()
+                budget = [context["parameters"]["budget"] for context in req["queryResult"]["outputContexts"] if "session_var" in context["name"]].pop()
+                PARAMETERS = {"term": dining, "categories": cuisine, "is_closed": "False", "limit": limit, "sort_by": "rating", "price":budgetDict[budget.replace(" ", "")], "location": "Singapore"}
+                return processPopularDiningIntent(dining, PARAMETERS, public_url)
+
+        elif action in ["getAllRestaurants", "getRestaurantsBudgetLast", "getRestaurantsCuisineLast", "getAllRestaurantsComplete"]:
+            onlyOpened = [context["parameters"]["onlyOpened"] for context in req["queryResult"]["outputContexts"] if "session_var" in context["name"]].pop()
+            if action == "getAllRestaurants":
+                onlyOpened = req["queryResult"]["parameters"]["onlyOpened"]
+            else:
+                onlyOpened = [context["parameters"]["onlyOpened"] for context in req["queryResult"]["outputContexts"] if "session_var" in context["name"]].pop()
+            if onlyOpened == "False":
+                print("all restaurants!!")
+                dining = [context["parameters"]["restaurant"] for context in req["queryResult"]["outputContexts"] if "session_var" in context["name"]].pop()
+                cuisine = [context["parameters"]["cuisine"] for context in req["queryResult"]["outputContexts"] if "session_var" in context["name"]].pop()
+                budget = [context["parameters"]["budget"] for context in req["queryResult"]["outputContexts"] if "session_var" in context["name"]].pop()
+                PARAMETERS = {"term": dining, "categories": cuisine, "limit": limit, "sort_by": "rating", "price":budgetDict[budget.replace(" ", "")], "location": "Singapore"}
+                return processPopularDiningIntent(dining, PARAMETERS, public_url)
+        else:
+            # Cannot understand. Just redirect to welcome screen
+            followupEvent = {"name": "WELCOME",
+                "parameters": {
+                    "unknown": True
+                }
             }
-        }
-        return make_response(jsonify({"followupEventInput": followupEvent}))
+            return make_response(jsonify({"followupEventInput": followupEvent}))
 
 
 

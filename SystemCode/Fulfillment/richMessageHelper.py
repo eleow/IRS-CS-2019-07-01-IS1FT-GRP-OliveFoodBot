@@ -72,7 +72,7 @@ def displayWelcome_slack(public_url, default_header_msg = None, additional_heade
     })
 
 
-    if (default_header_msg == None): default_header_msg = header_msg1
+    if (default_header_msg == None): default_header_msg = ''.join([c for c in header_msg1 if c not in ['•','_']])  # remove mrkdown characters
     fulfillmentMessage.append({
         "text": {
             "text": [default_header_msg]

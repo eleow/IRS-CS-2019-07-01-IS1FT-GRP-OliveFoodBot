@@ -1,7 +1,0 @@
-django
-gunicorn
-django-heroku
-flask
-requests
-lxml
-pml
