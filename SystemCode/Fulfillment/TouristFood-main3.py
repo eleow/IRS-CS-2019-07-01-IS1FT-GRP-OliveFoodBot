@@ -11,7 +11,7 @@ import argparse
 
 from IntentGetRestaurantInfo import processRestaurantInfoIntents
 from IntentGetHawkerInfo import processHawkerInfoIntent
-from restaurantsintents3 import *
+from restaurantsIntents3 import *
 from richMessageHelper import displayWelcome_slack
 
 # API_KEY = 'rG5TOrDyCq0G-lIelg9XzKfBcSNrc2F7zsa3C99Nray3q_-Wz8YU1Jdi1rAu7-gSQwdKCuZA0b9GXCp5xMImW9_dxQo_9ib4OAJ-PXRyqPGakfQD8WHL8BX7uDNJXXYx'
@@ -54,12 +54,13 @@ def webhook():
     intent_name = req["queryResult"]["intent"]["displayName"]
     action = req["queryResult"].get("action", None)
     foodItem = req["queryResult"]["parameters"].get("foodItem", None)
-    confirmYes = req["queryResult"]["parameters"].get("yes", None)
     hawkerCentreIntents = ["GetHawkerCentre", "GetHawkerCentreComplete"]
-    restaurantIntents = ["GetRestaurant", "GetRestaurantComplete", "GetRestaurantCusineFirst",
+    restaurantIntents = ["GetRestaurant", "GetRestaurantComplete", "GetRestaurantCuisineFirst",
                          "GetRestaurantBudgetFirst", "GetRestaurantNumberFirst", 
                          "GetRestaurantCuisineBudgetFirst", "GetRestaurantCuisineNumberFirst",
                          "GetRestaurantBudgetNumberFirst"]
+    print(intent_name)
+    print(action)
     
     if ("GetRestInfo" in intent_name):
         return processRestaurantInfoIntents(req, public_url)
@@ -72,15 +73,17 @@ def webhook():
         additional_header = None if not wasRedirected else "I am sorry, but I could not understand. Try rephasing your query."
         return make_response(jsonify(displayWelcome_slack(public_url, additional_header = additional_header)))
 
-    elif (action in hawkerCentreIntents) & (confirmYes == "yes"):
+    elif (action in hawkerCentreIntents):
         return hawkerCentreIntentHandler(req, public_url)
 
-    elif (action in restaurantIntents) & (confirmYes == "yes"):
+    elif (action in restaurantIntents):
+        print("restaurant")
+        print("~~~")
         return restaurantIntentHandler(req, public_url)
     
     elif foodItem != None:
         print(foodItem)
-        return foodItemIntentHandler(req, public_url)
+        return foodItemIntentHandler(req, foodItem, public_url)
     
     else:
         # Cannot understand. Just redirect to welcome screen

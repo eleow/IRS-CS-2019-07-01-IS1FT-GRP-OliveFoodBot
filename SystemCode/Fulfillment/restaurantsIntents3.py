@@ -20,6 +20,7 @@ DEBUG_MODE = False
 public_url = ""
 
 def getPopularDiningInfoIntentHandler(PARAMETERS):
+    print(PARAMETERS)
     business_data = yelp_request(API_HOST, SEARCH_PATH, YELP_API_KEY, PARAMETERS, debug=DEBUG_MODE)
     print(business_data)
     biz_array = []
@@ -46,7 +47,7 @@ def processPopularDiningIntent(results, header):
     if len(results) > 0:
         rich_messages = displayResults_slack(results, public_url, header, default_header_msg = None, use_is_closed=True)
     else:
-        rich_messages = {"fulfillmentText": "no results were found."}
+        rich_messages = {"fulfillmentText": "There are no results. Please try another search."}
     return make_response(jsonify(rich_messages))
 
 def hawkerCentreIntentHandler(req, url):
@@ -56,50 +57,50 @@ def hawkerCentreIntentHandler(req, url):
     for context in req["queryResult"]["outputContexts"]:
         if "session_var" in context["name"]:
             dining = context["parameters"].get("hawkerCentre", None)
-            limit = context["parameters"].get("number", None)
+            limit = int(context["parameters"].get("number", None)) # must be integer
             break
     if dining == None:    
-        dining = req["queryResult"]["parameters"]["hawkerCentre"]    
+        dining = req["queryResult"]["parameters"].get("hawkerCentre", None)    
     if limit == None:
-        limit = req["queryResult"]["parameters"]["number"]
+        limit = int(req["queryResult"]["parameters"].get("number", None))
     
     PARAMETERS = {"term": dining, "limit": limit, "sort_by": "rating", "price":1, "location": "Singapore"}  
     results = getPopularDiningInfoIntentHandler(PARAMETERS)
-    return processPopularDiningIntent(results, "Popular " + str(dining) + "s")
+    return processPopularDiningIntent(results, "Popular " + dining + "s")
 
 def restaurantIntentHandler(req, url):
     global public_url
     public_url = url
     
-    budgetDict = {"mid-range": 2, "expensive": 3, "veryexpensive": 4}
+    budgetDict = {"moderatelypriced": 2, "expensive": 3, "veryexpensive": 4}
     
     for context in req["queryResult"]["outputContexts"]:
         if "session_var" in context["name"]:
-            dining = context["parameters"]["hawkerCentre"]
-            cuisine = context["parameters"]["cuisine"]
-            budget = context["parameters"]["budget"]
-            limit = context["parameters"]["number"]
+            dining = context["parameters"].get("restaurant", None)
+            cuisine = context["parameters"].get("cuisine", None)
+            budget = context["parameters"].get("budget", None)
+            limit = int(context["parameters"].get("number", None))
             break
-    if len(dining) == 0:
-        dining = req["queryResult"]["parameters"]["restaurant"]  
-    if len(cuisine) == 0:
-        dining = req["queryResult"]["parameters"]["cuisine"]     
-    if len(budget) == 0:
-        limit = req["queryResult"]["parameters"]["budget"]
-    if len(limit) == 0:
-        limit = req["queryResult"]["parameters"]["number"]    
+    if dining == None:
+        dining = req["queryResult"]["parameters"].get("restaurant", None)  
+    if cuisine == None:
+        cuisine = req["queryResult"]["parameters"].get("cuisine", None)     
+    if budget == None:
+        budget = req["queryResult"]["parameters"].get("budget", None)
+    if limit == None:
+        limit = int(req["queryResult"]["parameters"].get("number", None))
 
     PARAMETERS = {"term": dining, "categories": cuisine, "limit": limit, "sort_by": "rating", "price":budgetDict[budget.replace(" ", "")], "location": "Singapore"}
+    print(PARAMETERS)
     results = getPopularDiningInfoIntentHandler(PARAMETERS)
     #print(results)
-    return processPopularDiningIntent(results, "Popular " + str(dining) + "s")
+    return processPopularDiningIntent(results, "Popular " + dining + "s")
 
-def foodItemIntentHandler(req, url):
+def foodItemIntentHandler(req, foodItem, url, limit = 5):
     global public_url
     public_url = url
     
-    foodItem = [context["parameters"]["foodItem"] for context in req["queryResult"]["outputContexts"] if "session_var" in context["name"]].pop()
     PARAMETERS = {"term": foodItem, "limit": limit, "sort_by": "rating", "location": "Singapore"}
     results = getPopularDiningInfoIntentHandler(PARAMETERS)
     print(results)
-    return processPopularDiningIntent(results, "Popular eateries selling " + str(foodItem))
+    return processPopularDiningIntent(results, "Popular eateries selling " + foodItem)
