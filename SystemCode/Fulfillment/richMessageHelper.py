@@ -13,8 +13,8 @@ def displayWelcome_slack(public_url, default_header_msg = None, additional_heade
     ]
     intro = random.choice(introArr) if not additional_header else additional_header
 
-    eg1 = random.choice(["Din Tai Fung in Orchard", "Swensens in Clementi"])
-    eg2 = "Find popular eateries"
+    eg1 = "Find popular eateries"
+    eg2 = random.choice(["Din Tai Fung in Orchard", "Swensens in Clementi"])
     eg3 = random.choice(["What is Laksa?", "What is Claypot Rice?"])
     intro2 = "• Recommend a dining place. (eg _%s_)\n• Get a specific restaurant's details such as its location and rating. (eg _%s_)\n• Tell you about specific local food in Singapore. (eg _%s_)\n" % (eg1, eg2, eg3)
 
