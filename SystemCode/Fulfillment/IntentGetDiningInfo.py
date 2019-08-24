@@ -66,7 +66,7 @@ def hawkerCentreIntentHandler(req, url):
     results = getPopularDiningInfoIntentHandler(PARAMETERS)
     emojiArr = ["🥣","🍝","🍲", "🍜","😋","😊","😁"]
     emoji = random.choice(emojiArr)
-    resultText = "Here's some of the most popular " + dining + "s in Singapore!" + emoji 
+    resultText = "Here are some of the most popular " + dining + "s in Singapore!" + emoji 
     return processPopularDiningIntent(results, resultText)
 
 def restaurantIntentHandler(req, url):
