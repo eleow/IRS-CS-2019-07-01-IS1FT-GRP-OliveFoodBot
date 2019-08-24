@@ -10,6 +10,7 @@ Created on Wed Aug 21 14:03:15 2019
 from flask import make_response, jsonify
 from yelpAPIHelper import yelp_request
 from richMessageHelper import displayResults_slack
+import random
 
 YELP_API_KEY = "rG5TOrDyCq0G-lIelg9XzKfBcSNrc2F7zsa3C99Nray3q_-Wz8YU1Jdi1rAu7-gSQwdKCuZA0b9GXCp5xMImW9_dxQo_9ib4OAJ-PXRyqPGakfQD8WHL8BX7uDNJXXYx"
 API_HOST = 'https://api.yelp.com'
@@ -20,9 +21,7 @@ DEBUG_MODE = False
 public_url = ""
 
 def getPopularDiningInfoIntentHandler(PARAMETERS):
-    print(PARAMETERS)
     business_data = yelp_request(API_HOST, SEARCH_PATH, YELP_API_KEY, PARAMETERS, debug=DEBUG_MODE)
-    print(business_data)
     biz_array = []
     if business_data["total"] > 0:
         for biz in business_data["businesses"]:
@@ -63,10 +62,12 @@ def hawkerCentreIntentHandler(req, url):
         dining = req["queryResult"]["parameters"].get("hawkerCentre", None)    
     if limit == None:
         limit = int(req["queryResult"]["parameters"].get("number", None))
-    
     PARAMETERS = {"term": dining, "limit": limit, "sort_by": "rating", "price":1, "location": "Singapore"}  
     results = getPopularDiningInfoIntentHandler(PARAMETERS)
-    return processPopularDiningIntent(results, "Popular " + dining + "s")
+    emojiArr = ["🥣","🍝","🍲", "🍜","😋","😊","😁"]
+    emoji = random.choice(emojiArr)
+    resultText = "Here's some of the most popular " + dining + "s in Singapore!" + emoji 
+    return processPopularDiningIntent(results, resultText)
 
 def restaurantIntentHandler(req, url):
     global public_url
@@ -91,10 +92,12 @@ def restaurantIntentHandler(req, url):
         limit = int(req["queryResult"]["parameters"].get("number", None))
 
     PARAMETERS = {"term": dining, "categories": cuisine, "limit": limit, "sort_by": "rating", "price":budgetDict[budget.replace(" ", "")], "location": "Singapore"}
-    print(PARAMETERS)
     results = getPopularDiningInfoIntentHandler(PARAMETERS)
     #print(results)
-    return processPopularDiningIntent(results, "Popular " + dining + "s")
+    emojiArr = ["🥣","🍝","🍲", "🍜","😋","😊","😁"]
+    emoji = random.choice(emojiArr)
+    resultText = "Here's a list of popular " + dining + "s in Singapore!" + emoji 
+    return processPopularDiningIntent(results, resultText)
 
 def foodItemIntentHandler(req, foodItem, url, limit = 5):
     global public_url
@@ -102,5 +105,4 @@ def foodItemIntentHandler(req, foodItem, url, limit = 5):
     
     PARAMETERS = {"term": foodItem, "limit": limit, "sort_by": "rating", "location": "Singapore"}
     results = getPopularDiningInfoIntentHandler(PARAMETERS)
-    print(results)
     return processPopularDiningIntent(results, "Popular eateries selling " + foodItem)
