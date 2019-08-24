@@ -1,0 +1,14 @@
+{
+  "name": "Dialogflow Food For Tourist bot",
+  "description": "Dialogflow webhook demonstration",
+  "repository": "https://github.com/eleow/IRS-MR-2019-07-01-IS1FT-GRP-TouristForFoodBot/",
+  "keywords": ["dialogflow", "Food For Tourist"],
+   "environments": {
+    "test": {
+      "scripts": {
+        "test-setup": "python TouristFood-main.py",
+        "test": "python TouristFood-main.py"
+      }
+    }
+  }
+}
