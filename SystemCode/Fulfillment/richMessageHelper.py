@@ -72,7 +72,7 @@ def displayWelcome_slack(public_url, default_header_msg = None, additional_heade
     })
 
 
-    if (default_header_msg == None): default_header_msg = ''.join([c for c in header_msg1 if c not in ['•','_']])  # remove mrkdown characters
+    if (default_header_msg == None): default_header_msg = ''.join([c for c in header_msg1 if c not in ['•','_', '*']])  # remove mrkdown characters
     fulfillmentMessage.append({
         "text": {
             "text": [default_header_msg]
@@ -93,7 +93,7 @@ def displayWelcome_slack(public_url, default_header_msg = None, additional_heade
     return RichMessages
 
 
-def displayResults_slack(results, public_url, header_msg, default_header_msg = None, use_is_closed = False):
+def displayResults_slack(results, public_url, header_msg, default_header_msg = None, use_is_closed = False, pre_header_msg = None):
     fulfillmentMessage = []
     slackBlocks = []
     dict_stars = {
@@ -109,7 +109,20 @@ def displayResults_slack(results, public_url, header_msg, default_header_msg = N
         "5.0": "stars_5"
     }
 
-    if (default_header_msg == None): default_header_msg = header_msg
+    if (default_header_msg == None):
+        default_header_msg = ''.join([c for c in header_msg if c not in ['•','_', '*']])  # remove mrkdown characters
+
+    if (pre_header_msg != None):
+        slackBlocks.append({
+            "type": "section",
+            "text": {
+                "type": "mrkdwn",
+                "text": pre_header_msg
+            }
+        })
+        slackBlocks.append({"type": "divider"})
+        default_header_msg = ''.join([c for c in pre_header_msg if c not in ['•','_', '*']]) + "\n" + default_header_msg
+
     fulfillmentMessage.append({
         "text": {
             "text": [default_header_msg]

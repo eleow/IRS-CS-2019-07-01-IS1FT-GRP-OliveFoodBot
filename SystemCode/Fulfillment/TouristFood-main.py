@@ -11,8 +11,10 @@ import argparse
 
 from IntentGetRestaurantInfo import processRestaurantInfoIntents
 from IntentGetHawkerInfo import processHawkerInfoIntent
-from IntentGetDiningInfo import hawkerCentreIntentHandler, restaurantIntentHandler, foodItemIntentHandler
+from IntentGetDiningInfo import hawkerCentreIntentHandler, restaurantIntentHandler, foodItemIntentHandler, restaurantIntentConfirmationHandler
+from IntentWhatIs import whatisIntentHandler
 from richMessageHelper import displayWelcome_slack
+
 
 API_KEY = 'rG5TOrDyCq0G-lIelg9XzKfBcSNrc2F7zsa3C99Nray3q_-Wz8YU1Jdi1rAu7-gSQwdKCuZA0b9GXCp5xMImW9_dxQo_9ib4OAJ-PXRyqPGakfQD8WHL8BX7uDNJXXYx'
 ENDPOINT = 'https://api.yelp.com/v3/businesses/search'
@@ -74,9 +76,10 @@ def webhook():
         foodItem = req["queryResult"]["parameters"].get("foodItem", None)
         hawkerCentreIntents = ["GetHawkerCentre", "GetHawkerCentreComplete"]
         restaurantIntents = ["GetRestaurant", "GetRestaurantComplete", "GetRestaurantCuisineFirst",
-                             "GetRestaurantBudgetFirst", "GetRestaurantNumberFirst", 
+                             "GetRestaurantBudgetFirst", "GetRestaurantNumberFirst",
                              "GetRestaurantCuisineBudgetFirst", "GetRestaurantCuisineNumberFirst",
                              "GetRestaurantBudgetNumberFirst"]
+        restaurantIntentsConfirmation = ["UserRepliesNumberRestaurant"]
 
         if ("GetRestInfo" in intent_name):
             return processRestaurantInfoIntents(req, public_url)
@@ -94,11 +97,18 @@ def webhook():
 
         elif (action in restaurantIntents):
             return restaurantIntentHandler(req, public_url)
-    
+
+        elif (intent_name in restaurantIntentsConfirmation):
+            return restaurantIntentConfirmationHandler(req)
+
+        # replaced knowledge-base intent with explicit intent for more control
+        elif (intent_name == "WhatIsDish"):
+            return whatisIntentHandler(req, public_url)
+
         elif foodItem != None:
             print(foodItem)
             return foodItemIntentHandler(req, foodItem, public_url)
-    
+
         else:
             # Cannot understand. Just redirect to welcome screen
             followupEvent = {"name": "WELCOME",
