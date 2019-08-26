@@ -66,7 +66,7 @@ from flask import render_template
 @app.route('/', methods=['POST', 'GET'])
 def webhook():
     if (request.method == 'GET'):
-        message = "Flash Webhook is running @ " + public_url
+        message = "Flask Webhook is running @ " + public_url
         return render_template('index.html', message=message, img="/static/olive.png")
 
     elif (request.method == 'POST'):
