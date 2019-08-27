@@ -2,10 +2,8 @@
 
 ## SECTION 1 : PROJECT TITLE
 ## Food Bot for Tourists to Singapore 
-Olive The Food Bot
 
-XXXX
-
+![Olive The FoodBot](/SystemCode/Fulfillment/static/olive.png?raw=true)
 ---
 
 ## SECTION 2 : EXECUTIVE SUMMARY / PAPER ABSTRACT
@@ -39,20 +37,19 @@ Please refer to the user guide documentation in this repository for:
 - Steps on running of the system demo
 - Test Scenarios
 
-`<Github File Link>` : <https://github.com/eleow/IRS-MR-2019-07-01-IS1FT-GRP-XXX/blob/master/UserGuide/User%20Guide.pdf>
+`<Github File Link>` : <https://github.com/eleow/IRS-CS-2019-07-01-IS1FT-GRP-OliveFoodBot/blob/master/UserGuide/User%20Guide.pdf>
 
 ---
 ## SECTION 6 : PROJECT REPORT / PAPER
 
 The Project Report can be downloaded from this repository. Direct Link can be found below.
 
-`<Github File Link>` : <https://github.com/eleow/IRS-MR-2019-07-01-IS1FT-GRP-XXX/blob/master/ProjectReport/Project%20Report%20.pdf>
+`<Github File Link>` : <https://github.com/eleow/IRS-CS-2019-07-01-IS1FT-GRP-OliveFoodBot/blob/master/ProjectReport/Project%20Report%20.pdf>
 
 ---
 
 ## SECTION 7 : MISCELLANEOUS
 
-XXX
 
 ---
 
