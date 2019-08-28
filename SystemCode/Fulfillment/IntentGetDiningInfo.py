@@ -25,7 +25,6 @@ def getPopularDiningInfoIntentHandler(PARAMETERS):
     biz_array = []
     if business_data["total"] > 0:
         for biz in business_data["businesses"]:
-            #bizDict["hours"].append("Open Now" if biz.get("hours", None) != None and biz["hours"][0]["is_open_now"] else "Closed")
             biz_array.append({
                 "name": biz.get("name", ""),
                 "phone": biz.get("phone", "N/A"),
@@ -36,15 +35,13 @@ def getPopularDiningInfoIntentHandler(PARAMETERS):
                 "image": biz.get("image_url", "N/A"),
                 "review_count": biz.get("review_count", "N/A"),
                 "rating": biz.get("rating", "N/A"),
-                "is_closed": biz.get("is_closed", "")
             })
-            #bizDict["photo"].append(biz["photos"][0] if (biz.get("photos", None) != None and len(biz["photos"])>=1) else None)
     return biz_array
 
 def processPopularDiningIntent(results, header, pre_header_msg = None):
 
     if len(results) > 0:
-        rich_messages = displayResults_slack(results, public_url, header, default_header_msg = None, use_is_closed=True, pre_header_msg = pre_header_msg)
+        rich_messages = displayResults_slack(results, public_url, header, default_header_msg = None, use_is_popular=True, pre_header_msg = pre_header_msg)
     else:
         rich_messages = {"fulfillmentText": "There are no results. Please try another search."}
     return make_response(jsonify(rich_messages))
@@ -55,25 +52,22 @@ def hawkerCentreIntentHandler(req, url):
 
     for context in req["queryResult"]["outputContexts"]:
         if "session_var" in context["name"]:
-            dining = context["parameters"].get("hawkerCentre", None)
             limit = int(context["parameters"].get("number", None)) # must be integer
             break
-    if dining == None:
-        dining = req["queryResult"]["parameters"].get("hawkerCentre", None)
     if limit == None:
         limit = int(req["queryResult"]["parameters"].get("number", None))
-    PARAMETERS = {"term": dining, "limit": limit, "sort_by": "rating", "price":1, "location": "Singapore"}
+    PARAMETERS = {"term": "hawker centre", "limit": limit, "sort_by": "rating", "price":1, "location": "Singapore"}
     results = getPopularDiningInfoIntentHandler(PARAMETERS)
     emojiArr = ["🥣","🍝","🍲", "🍜","😋","😊","😁"]
     emoji = random.choice(emojiArr)
-    resultText = "Here are some of the most popular " + dining + "s in Singapore!" + emoji
+    resultText = "Here are some of the most popular hawker centres in Singapore!" + emoji
     return processPopularDiningIntent(results, resultText)
 
 def restaurantIntentHandler(req, url):
     global public_url
     public_url = url
 
-    budgetDict = {"moderatelypriced": 2, "expensive": 3, "veryexpensive": 4}
+    budgetDict = {"moderatelypriced": 2, "somewhatexpensive": 3, "expensive": 4}
     dining = None
     cuisine = None
     budget = None
@@ -81,13 +75,10 @@ def restaurantIntentHandler(req, url):
 
     for context in req["queryResult"]["outputContexts"]:
         if "session_var" in context["name"]:
-            dining = context["parameters"].get("restaurant", None)
             cuisine = context["parameters"].get("cuisine", None)
             budget = context["parameters"].get("budget", None)
             limit = int(context["parameters"].get("number", None))
             break
-    if dining == None:
-        dining = req["queryResult"]["parameters"].get("restaurant", None)
     if cuisine == None:
         cuisine = req["queryResult"]["parameters"].get("cuisine", None)
     if budget == None:
@@ -95,50 +86,13 @@ def restaurantIntentHandler(req, url):
     if limit == None:
         limit = int(req["queryResult"]["parameters"].get("number", None))
 
-    PARAMETERS = {"term": dining, "categories": cuisine, "limit": limit, "sort_by": "rating", "price":budgetDict[budget.replace(" ", "")], "location": "Singapore"}
+    PARAMETERS = {"term": "restaurant", "categories": cuisine, "limit": limit, "sort_by": "rating", "price":budgetDict[budget.replace(" ", "")], "location": "Singapore"}
     results = getPopularDiningInfoIntentHandler(PARAMETERS)
     #print(results)
     emojiArr = ["🥣","🍝","🍲", "🍜","😋","😊","😁"]
     emoji = random.choice(emojiArr)
-    resultText = "Here's a list of popular " + dining + "s in Singapore!" + emoji
+    resultText = "Here's a list of popular restaurants in Singapore!" + emoji
     return processPopularDiningIntent(results, resultText)
-
-def restaurantIntentConfirmationHandler(req):
-    intent_name = req["queryResult"]["intent"]["displayName"]
-    action = req["queryResult"].get("action", None)
-    p = req["queryResult"]["parameters"]
-    confirmArr = []
-
-    if (intent_name == "UserRepliesNumberRestaurant"):
-        cuisine = None
-        budget = None
-        pNumber = p.get("number", None)
-        for context in req["queryResult"]["outputContexts"]:
-            if "session_var" in context["name"]:
-                cuisine = context["parameters"].get("cuisine", None)
-                budget = context["parameters"].get("budget", None)
-                break
-
-        if (budget != None and cuisine != None):
-            confirmArr = [
-                "Sure. Are you searching for %s %s %s restaurants?" % (pNumber, budget, cuisine),
-            ]
-
-
-    return make_response(jsonify({
-        "fulfillmentMessages": [
-            {
-                "quickReplies": {
-                    "title": random.choice(confirmArr),
-                    "quickReplies": [
-                        "Yes", "No"
-                    ]
-                }
-            }
-        ]
-    }))
-
-
 
 def foodItemIntentHandler(req, foodItem, url, limit = 5, pre_header_msg = None):
     global public_url

@@ -11,7 +11,7 @@ import argparse
 
 from IntentGetRestaurantInfo import processRestaurantInfoIntents
 from IntentGetHawkerInfo import processHawkerInfoIntent
-from IntentGetDiningInfo import hawkerCentreIntentHandler, restaurantIntentHandler, foodItemIntentHandler, restaurantIntentConfirmationHandler
+from IntentGetDiningInfo import hawkerCentreIntentHandler, restaurantIntentHandler, foodItemIntentHandler
 from IntentWhatIs import whatisIntentHandler
 from richMessageHelper import displayWelcome_slack
 
@@ -97,9 +97,6 @@ def webhook():
 
         elif (action in restaurantIntents):
             return restaurantIntentHandler(req, public_url)
-
-        elif (intent_name in restaurantIntentsConfirmation):
-            return restaurantIntentConfirmationHandler(req)
 
         # replaced knowledge-base intent with explicit intent for more control
         elif (intent_name == "WhatIsDish"):
