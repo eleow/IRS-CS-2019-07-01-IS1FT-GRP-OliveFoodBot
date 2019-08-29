@@ -9,7 +9,10 @@ Food Bot for Tourists to Singapore
 
 ## SECTION 2 : EXECUTIVE SUMMARY / PAPER ABSTRACT
 
+The objective of this project is to create a chatbot that will guide tourists in Singapore in their food adventures in Singapore, providing them with information on popular local food and eateries quickly and efficiently. 
+Confronted with a bewildering amount of information on websites and food guides, it can be a difficult for tourists to decide where to dine. Hence, we decided to develop a chatbot to assist tourists in their search for popular eateries during their stay in Singapore, providing them with concise information instantaneously.
 
+Search results of popular hawker centres and restaurants returned to users are customised based on their food preferences and budgets. In addition, the chatbot can also provide information on famous local dishes.
 
 ---
 
@@ -19,7 +22,7 @@ Food Bot for Tourists to Singapore
 | :------------ |:---------------:| :-----| :-----|
 | Ng Mei Ying | A0198546L | • DialogFlow (Dining Info intents). <br>• Project Report| e0402087@u.nus.edu |
 | Edmund Leow | A0198458H | • DialogFlow (Get Restaurant Information intent) <br>• User Guide <br>• Video | e0401999@u.nus.edu |
-| Wilson Lum Kok Keong| A0198478A | • DialogFlow (Knowledge Base, Web Scraping)<br>• Heroku deployment | e0402019@u.nus.edu |
+| Wilson Lum Kok Keong| A0198478A | • DialogFlow (Knowledge Base, Web Scraping)<br>• Heroku deployment <br>• Chatbot testing| e0402019@u.nus.edu |
 
 ---
 
