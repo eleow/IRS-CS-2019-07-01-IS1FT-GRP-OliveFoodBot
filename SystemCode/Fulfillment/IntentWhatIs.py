@@ -17,7 +17,7 @@ def initiateLookUpTable():
     dir_path = dirname(realpath(__file__))
     chdir(dir_path)
 
-    with open('_FoodCat.csv', mode='r', encoding="utf=8") as infile:
+    with open('_FoodCat.csv', mode='r', encoding="utf-8-sig") as infile:
         reader = csv.reader(infile)
         for row in reader:
             foodDic[row[0].strip().lower()] = row[1]

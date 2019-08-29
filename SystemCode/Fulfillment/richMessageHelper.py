@@ -173,18 +173,27 @@ def displayResults_slack(results, public_url, header_msg, default_header_msg = N
         if (use_is_closed and r["is_closed"] != ""): slackText1 = slackText1 + "%s\n" % ("Closed now" if r["is_closed"] == "True" else "Open now")
 
 
-        slackBlocks.append({
-            "type": "section",
-            "text": {
-                "type": "mrkdwn",
-                "text": slackText1
-            },
-            "accessory": {
-                "type": "image",
-                "image_url": r["image"],
-                "alt_text": "Thumbnail"
-            }
-        })
+        if (r["image"] != ""):
+            slackBlocks.append({
+                "type": "section",
+                "text": {
+                    "type": "mrkdwn",
+                    "text": slackText1
+                },
+                "accessory": {
+                    "type": "image",
+                    "image_url": r["image"],
+                    "alt_text": "Thumbnail"
+                }
+            })
+        else:
+            slackBlocks.append({
+                "type": "section",
+                "text": {
+                    "type": "mrkdwn",
+                    "text": slackText1
+                }
+            })
 
         star_url = dict_stars.get(str(r["rating"]), None)
         if (star_url != None):

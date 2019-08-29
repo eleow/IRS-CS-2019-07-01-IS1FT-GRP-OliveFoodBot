@@ -253,6 +253,11 @@ def processRestaurantInfoExeIntent(req):
         emoji = random.choice(emojiArr)
         resultText = mag + " Here are your results for *" + RestaurantNameRaw + "* located in *" + address + "* " + emoji
 
+        # check if results contain businesses in similar categories
+        hasOthers = not all(list(map(lambda x: RestaurantNameRaw.lower() in x["name"].lower(), results))[1:])
+        if (hasOthers):
+            resultText = resultText + "\nI have also included restaurants in similar categories."
+
         RichMessages = displayResults_slack(results, public_url, resultText, default_msg)
 
     # Return the Restaurant Information
