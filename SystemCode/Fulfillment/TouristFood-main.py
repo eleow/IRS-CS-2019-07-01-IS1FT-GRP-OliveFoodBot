@@ -79,7 +79,7 @@ def webhook():
                              "GetRestaurantBudgetFirst", "GetRestaurantNumberFirst",
                              "GetRestaurantCuisineBudgetFirst", "GetRestaurantCuisineNumberFirst",
                              "GetRestaurantBudgetNumberFirst"]
-        restaurantIntentsConfirmation = ["UserRepliesNumberRestaurant"]
+        # restaurantIntentsConfirmation = ["UserRepliesNumberRestaurant"]
 
         if ("GetRestInfo" in intent_name):
             return processRestaurantInfoIntents(req, public_url)

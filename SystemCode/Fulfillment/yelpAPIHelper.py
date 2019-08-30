@@ -42,7 +42,7 @@ def yelp_request(host, path, api_key, url_params={}, debug=DEBUG_MODE):
     return response.json()
 
 
-def yelp_search(api_key, term, location, debug):
+def yelp_search(api_key, term, location, sortBy='best_match', debug=DEBUG_MODE):
     """Query Yelp Search API by a search term and location.
     Args:
         term (str): The search term passed to the API.
@@ -51,7 +51,7 @@ def yelp_search(api_key, term, location, debug):
         dict: The JSON response from the request.
     """
     url_params = {'term': term.replace(
-        ' ', '+'), 'location': location.replace(' ', '+'), 'limit': SEARCH_LIMIT}
+        ' ', '+'), 'location': location.replace(' ', '+'), 'limit': SEARCH_LIMIT, 'sort_by': sortBy}
     return yelp_request(API_HOST, SEARCH_PATH, api_key, url_params=url_params, debug=debug)
 
 
@@ -70,11 +70,15 @@ def yelp_query_api(term, location, debug=DEBUG_MODE, num_results=1):
     """Queries the API by the input values from the user.
     Args:
         term (str): The search term to query.
-        location (str): The location of the business to query.`
+        location (str): The location of the business to query.
+        Note: Businesses returned in the response may not be strictly within the specified location.
     Returns:
         array of responses that match num_results
     """
-    response = yelp_search(YELP_API_KEY, term, location, debug)
+    sortBy = 'best_match'
+    if (location.lower() != 'singapore'): sortBy = 'distance'   # don't just use 'best-match', we want 'distance'
+
+    response = yelp_search(YELP_API_KEY, term, location, sortBy= sortBy, debug=debug)
 
     # Check if daily access limit has been reached
     # https://www.yelp.com/developers/documentation/v3/rate_limiting
@@ -86,6 +90,11 @@ def yelp_query_api(term, location, debug=DEBUG_MODE, num_results=1):
 
     # Check if this business exists. If exists, we get its ID
     businesses = response.get('businesses')
+
+    # if (location.lower() != 'singapore'):
+    #     businesses = sorted(businesses, key= lambda b: b['distance'])   # don't just use
+
+
     if not businesses:
         print(u'No businesses for {0} in {1} found.'.format(term, location))
         return None

@@ -68,7 +68,7 @@ def restaurantIntentHandler(req, url):
     public_url = url
 
     budgetDict = {"moderatelypriced": 2, "somewhatexpensive": 3, "expensive": 4}
-    dining = None
+    # dining = None
     cuisine = None
     budget = None
     limit = None
