@@ -48,7 +48,7 @@ Please refer to the user guide documentation in this repository for:
 
 The Project Report can be downloaded from this repository. Direct Link can be found below.
 
-`<Github File Link>` : <https://github.com/eleow/IRS-CS-2019-07-01-IS1FT-GRP-OliveFoodBot/blob/master/ProjectReport/Project%20Report%20.pdf>
+`<Github File Link>` : <https://github.com/eleow/IRS-CS-2019-07-01-IS1FT-GRP-OliveFoodBot/blob/master/ProjectReport/Project%20Report.pdf>
 
 ---
 
