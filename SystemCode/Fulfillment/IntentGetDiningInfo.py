@@ -56,7 +56,7 @@ def hawkerCentreIntentHandler(req, url):
             break
     if limit == None:
         limit = int(req["queryResult"]["parameters"].get("number", None))
-    PARAMETERS = {"term": "hawker centre", "limit": limit, "sort_by": "rating", "price":1, "location": "Singapore"}
+    PARAMETERS = {"term": "hawker centre", "limit": limit, "sort_by": "rating", "price":1, "location": "Singapore", "is_closed": False}
     results = getPopularDiningInfoIntentHandler(PARAMETERS)
     emojiArr = ["🥣","🍝","🍲", "🍜","😋","😊","😁"]
     emoji = random.choice(emojiArr)
@@ -86,7 +86,7 @@ def restaurantIntentHandler(req, url):
     if limit == None:
         limit = int(req["queryResult"]["parameters"].get("number", None))
 
-    PARAMETERS = {"term": "restaurant", "categories": cuisine, "limit": limit, "sort_by": "rating", "price":budgetDict[budget.replace(" ", "")], "location": "Singapore"}
+    PARAMETERS = {"term": "restaurant", "categories": cuisine, "limit": limit, "sort_by": "rating", "price":budgetDict[budget.replace(" ", "")], "location": "Singapore", "is_closed": False}
     results = getPopularDiningInfoIntentHandler(PARAMETERS)
     #print(results)
     emojiArr = ["🥣","🍝","🍲", "🍜","😋","😊","😁"]
@@ -98,6 +98,6 @@ def foodItemIntentHandler(req, foodItem, url, limit = 5, pre_header_msg = None):
     global public_url
     public_url = url
 
-    PARAMETERS = {"term": foodItem, "limit": limit, "sort_by": "rating", "location": "Singapore"}
+    PARAMETERS = {"term": foodItem, "limit": limit, "sort_by": "best_match", "location": "Singapore", "is_closed": False}
     results = getPopularDiningInfoIntentHandler(PARAMETERS)
     return processPopularDiningIntent(results, "*Popular eateries selling " + foodItem + "*", pre_header_msg= pre_header_msg)
