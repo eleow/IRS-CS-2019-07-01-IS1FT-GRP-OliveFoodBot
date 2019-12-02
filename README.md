@@ -28,7 +28,12 @@ Search results of popular hawker centres and restaurants returned to users are c
 
 ## SECTION 4 : VIDEO OF SYSTEM MODELLING & USE CASE DEMO
 
-Video available on Youtube at https://youtu.be/y2ppdawU9_c
+
+<a href="https://youtu.be/oConFfc9yFE" target="_blank"><img src="./Video/video_screenshot.png" 
+alt="ITLMS" width="640" height="360" border="10" /></a>
+
+Video available on Youtube at https://youtu.be/oConFfc9yFE
+
 
 ---
 
